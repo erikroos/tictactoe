@@ -7,7 +7,7 @@ import java.util.Random;
 /**
  * Code (c) Hanzehogeschool Groningen
  */
-class TicTacToe
+class Controller
 {
 	protected static final int HUMAN        = 0;
 	protected static final int COMPUTER     = 1;
@@ -18,16 +18,17 @@ class TicTacToe
 	public  static final int UNCLEAR      = 2;
 	public  static final int COMPUTER_WIN = 3;
 
-	private int[][] board = new int[3][3];
+	protected Model board = new Model();
+
     private Random random = new Random();
 	private int side = random.nextInt(2);
 	private int position = UNCLEAR;
 	private char computerChar, humanChar;
 
 	// Constructor
-	public TicTacToe()
+	public Controller()
 	{
-		clearBoard();
+		board.clear();
 		initSide();
 	}
 	
@@ -56,20 +57,36 @@ class TicTacToe
 
 	public boolean computerPlays()
 	{
-		return side==COMPUTER;
+		return side == COMPUTER;
 	}
 
-	public int chooseMove()
+	// Check if move is legal
+	public boolean moveOk(int move)
 	{
-	    Best best = chooseMove(COMPUTER);
+		return (move >= 0 && move <= 8 && board.getContents(move / 3, move % 3) == EMPTY);
+	}
+
+	public int chooseMove(boolean useAI)
+	{
+		BestMove best;
+		if (useAI) {
+			best = chooseMoveAI(COMPUTER);
+		} else {
+			best = chooseMoveHeur(COMPUTER);
+		}
 	    return best.row * 3 + best.column;
     }
-    
-    // Find optimal move
-	protected Best chooseMove(int side)
+
+	/**
+	 * Find optimal move using the Minimax algorithm.
+	 *
+	 * @param side
+	 * @return BestMove
+	 */
+	protected BestMove chooseMoveAI(int side)
 	{
 		int opp = (side == COMPUTER) ? HUMAN : COMPUTER; // The other side (in the first call of this method this is always HUMAN)
-		Best reply;           // Opponent's best reply
+		BestMove reply;       // Opponent's best reply
 		int simpleEval;       // Result of an immediate evaluation
 		// For storing the best result so far:
 		int bestRow = 0;
@@ -77,19 +94,17 @@ class TicTacToe
 		int value = (side == COMPUTER) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
 		// Base case: board is full, we can see directly what the score is
-		simpleEval = positionValue();
+		simpleEval = board.positionValue();
 		if (simpleEval != UNCLEAR) {
-			return new Best(simpleEval);
+			return new BestMove(simpleEval);
 		}
-
-		// TODO extra step: for efficiency, use some heuristics like always take central square if it is free
 
 		// Backtrack case: try all open moves and see which is best
 		for (int move : getNextMoves()) {
 			// Try this move for the current player
-			board[move / 3][move % 3] = side;
+			board.putMove(move / 3, move % 3, side);
 			// Now see what the opponent is going to do
-			reply = chooseMove(opp); // Recursion!
+			reply = chooseMoveAI(opp); // Recursion!
 			if (side == HUMAN) {
 				// Human, minimizing
 				if (reply.val < value) {
@@ -106,33 +121,52 @@ class TicTacToe
 				}
 			}
 			// Undo move
-			board[move / 3][move % 3] = EMPTY;
+			board.putMove(move / 3, move % 3, EMPTY);
 		}
-		return new Best(value, bestRow, bestColumn);
+		return new BestMove(value, bestRow, bestColumn);
     }
+
+	/**
+	 * Find optimal move using simple heuristics.
+	 *
+	 * @param side
+	 * @return BestMove
+	 */
+	protected BestMove chooseMoveHeur(int side) {
+		int opp = (side == COMPUTER) ? HUMAN : COMPUTER; // The other side (in the first call of this method this is always HUMAN)
+		BestMove reply;       // Opponent's best reply
+		int simpleEval;       // Result of an immediate evaluation
+		// For storing the best result so far:
+		int bestRow = 0;
+		int bestColumn = 0;
+		int value = (side == COMPUTER) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
+		// Base case: board is full, we can see directly what the score is
+		simpleEval = board.positionValue();
+		if (simpleEval != UNCLEAR) {
+			return new BestMove(simpleEval);
+		}
+
+		// TODO
+		return null;
+	}
 
     private List<Integer> getNextMoves() {
 		List<Integer> moves = new ArrayList<>();
 		// Find all clear squares
 		for (int pos = 0; pos < 9; pos++) {
-			if (board[pos / 3][pos % 3] == EMPTY) {
+			if (board.getContents(pos / 3, pos % 3) == EMPTY) {
 				moves.add(pos);
 			}
 		}
 		return moves;
 	}
-   
-    // Check if move is legal
-    public boolean moveOk(int move)
-    {
-		return (move >= 0 && move <= 8 && board[move / 3][move % 3] == EMPTY);
-    }
     
     // Play move
     public void playMove(int move)
     {
 		// Put X or O on chosen tile
-		board[move / 3][move % 3] = this.side;
+		board.putMove(move / 3, move % 3, this.side);
 		// Switch side
 		if (side == COMPUTER) {
 			this.side = HUMAN;
@@ -141,82 +175,8 @@ class TicTacToe
 		}
 	}
 
-	// Simple supporting routines
-
-	private void clearBoard( )
-	{
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				board[i][j] = EMPTY;
-			}
-		}
-	}
-
-	private boolean boardIsFull()
-	{
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				if (board[i][j] == EMPTY) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	// Returns whether 'side' has won in this position
-	protected boolean isAWin(int side)
-	{
-		// Check the three horizontals
-		for (int i = 0; i < 3; i++) {
-			if (board[i][0] == side && board[i][1] == side && board[i][2] == side) {
-				return true;
-			}
-		}
-	    // Check the three verticals
-		for (int i = 0; i < 3; i++) {
-			if (board[0][i] == side && board[1][i] == side && board[2][i] == side) {
-				return true;
-			}
-		}
-		// Check the two diagonals
-		if (board[0][0] == side && board[1][1] == side && board[2][2] == side) {
-			return true;
-		}
-		if (board[0][2] == side && board[1][1] == side && board[2][0] == side) {
-			return true;
-		}
-		return false;
-    }
-
-	// Play a move, possibly clearing a square
-	private void place( int row, int column, int piece )
-	{
-		board[row][column] = piece;
-	}
-
-	private boolean squareIsEmpty( int row, int column )
-	{
-		return board[row][column] == EMPTY;
-	}
-
-	// Compute static value of current position (win, draw, etc.)
-	protected int positionValue( )
-	{
-		if (isAWin(HUMAN)) {
-			return HUMAN_WIN;
-		}
-		if (isAWin(COMPUTER)) {
-			return COMPUTER_WIN;
-		}
-		if (boardIsFull()) {
-			return DRAW;
-		}
-		return UNCLEAR;
-	}
-
 	/**
-	 * Gives a textual representation of the TTT board.
+	 * Gives a textual representation of the TTT board, for View to render.
 	 * @return String
 	 */
 	public String toString()
@@ -224,9 +184,9 @@ class TicTacToe
 		String returnString = "";
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				if (board[i][j] == EMPTY) {
+				if (board.getContents(i, j) == EMPTY) {
 					returnString += ".";
-				} else if (board[i][j] == HUMAN) {
+				} else if (board.getContents(i, j) == HUMAN) {
 					returnString += this.humanChar;
 				} else {
 					returnString += this.computerChar;
@@ -240,7 +200,7 @@ class TicTacToe
 	
 	public boolean gameOver()
 	{
-	    this.position = positionValue();
+	    this.position = board.positionValue();
 	    return this.position != UNCLEAR;
     }
     
@@ -249,20 +209,5 @@ class TicTacToe
         if      (this.position==COMPUTER_WIN) return "computer";
         else if (this.position==HUMAN_WIN   ) return "human";
         else                                  return "nobody";
-    }
-
-	protected class Best
-    {
-       int row;
-       int column;
-       int val;
-
-       public Best(int v) {
-		   this(v, 0, 0);
-	   }
-      
-       public Best(int v, int r, int c) {
-		   val = v; row = r; column = c;
-	   }
     }
 }

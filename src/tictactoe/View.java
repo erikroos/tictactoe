@@ -7,39 +7,39 @@ import java.util.*;
  *
  * Textual UI (View) for TicTacToeGame
  */
-class Tui
+class View
 {
     private Scanner reader = new Scanner(System.in);
-    private TicTacToe t; 
+    private Controller gameController;
  
-    public Tui()
+    public View()
     {
         do {
             System.out.println("*** New game ***\n");
-            t = new TicTacToe();
-            if (t.computerPlays()) {
+            gameController = new Controller();
+            if (gameController.computerPlays()) {
                 System.out.println("I start:\n");
             } else {
                 System.out.println("You start:\n");
             }
-            while (!t.gameOver())
+            while (!gameController.gameOver())
             {
-               t.playMove(move());
-               System.out.println(t);
+                gameController.playMove(move());
+                System.out.println(gameController);
             }
-            System.out.println("Game over: " + t.winner() + " wins");
+            System.out.println("Game over: " + gameController.winner() + " wins");
         } while (nextGame());
     }
     
     public static void main(String[] args) {
-        new Tui();
+        new View();
     }
     
     private int move()
     {
-        if (t.computerPlays())
+        if (gameController.computerPlays())
         {
-            int compMove = t.chooseMove();
+            int compMove = gameController.chooseMove(true);
             System.out.println("Computer move = " + compMove);
             return compMove;
         } else {
@@ -47,7 +47,7 @@ class Tui
             do {
                 System.out.print("Human move (enter number for position: 012-345-678) = ");
                 humanMove = reader.nextInt();
-            } while (!t.moveOk(humanMove));
+            } while (!gameController.moveOk(humanMove));
             return humanMove;
         }
     }
