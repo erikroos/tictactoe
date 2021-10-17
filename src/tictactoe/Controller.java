@@ -1,8 +1,6 @@
 package tictactoe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Code (c) Hanzehogeschool Groningen
@@ -20,15 +18,18 @@ class Controller
 
 	protected Model board = new Model();
 
-    private Random random = new Random();
-	private int side = random.nextInt(2);
+	private int side;
 	private int position = UNCLEAR;
 	protected static char computerChar, humanChar;
 
 	// Constructor
-	public Controller()
-	{
+	public Controller() {
+	}
+
+	public void init() {
 		board.clear();
+		Random random = new Random();
+		side = random.nextInt(2);
 		initSide();
 	}
 	
@@ -148,13 +149,25 @@ class Controller
 		}
 
 		// TODO
+		// Rule 1: Prevent opponent from making 3-in-a-row (using canWin with opp)
+		// Rule 2: Make 3-in-a-row if possible (using canWin with side)
+		// Rule 3: Take center if still available
+		// Rule 4: Take random free square
+
 		return null;
 	}
 
     private List<Integer> getNextMoves() {
 		List<Integer> moves = new ArrayList<>();
-		// Find all clear squares
-		for (int pos = 0; pos < 9; pos++) {
+		// Find all clear squares: start with center (4) and put the rest in random order
+		Integer[] squaresArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+		List<Integer> squares = Arrays.asList(squaresArray);
+		Collections.shuffle(squares);
+		int i = squares.indexOf(4);
+		squares.set(i, squares.get(0));
+		squares.set(0, 4);
+		// Now find the clear squares
+		for (int pos : squares) {
 			if (board.getContents(pos / 3, pos % 3) == EMPTY) {
 				moves.add(pos);
 			}

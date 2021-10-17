@@ -27,59 +27,33 @@ class View
         char mode = (reader.next()).charAt(0);
         // Server mode
         if (mode == '1') {
+            // Delegate control to server controller
             try {
-                startServer();
+                ServerController sc = new ServerController();
+                sc.serverLoop();
             } catch (IOException e) {
-                System.out.println("Connecting to server failed - terminating...");
+                System.out.println("Server communication failed - terminating...");
             }
             return;
         }
         // Local mode
         do {
             System.out.println("*** New game ***\n");
+            gameController.init();
             if (gameController.computerPlays()) {
                 System.out.println("I start:\n");
             } else {
                 System.out.println("You start:\n");
             }
+            // The central Game Loop
             while (!gameController.gameOver())
             {
-                gameController.playMove(move());
+                int square = move(); // get move from either human or computer
+                gameController.playMove(square);
                 System.out.println(gameController.board);
             }
             System.out.println("Game over: " + gameController.winner() + " wins");
         } while (nextGame());
-    }
-
-    private void startServer() throws IOException {
-        String hostName = "145.33.225.170";
-        int portNumber = 7789;
-        String name = "erikroos";
-
-        Socket connection = new Socket(hostName, portNumber);
-        PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String response;
-
-        in.readLine(); // copyright line
-        in.readLine(); // OK
-        out.println("login " + name);
-        response = in.readLine();
-        if (!response.equals("OK")) {
-            System.out.println("Login failed - terminating...");
-            return;
-        }
-        out.println("get gamelist");
-        response = in.readLine();
-        if (response.equals("OK")) {
-            System.out.println("Games: " + in.readLine());
-        }
-        out.println("get playerlist");
-        response = in.readLine();
-        if (response.equals("OK")) {
-            System.out.println("Players: " + in.readLine());
-        }
-        out.println("logout");
     }
     
     public static void main(String[] args) {

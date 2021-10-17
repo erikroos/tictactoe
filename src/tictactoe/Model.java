@@ -43,6 +43,39 @@ public class Model {
         return false;
     }
 
+    // Returns move that 'side' can make to win in this position
+    protected int canWin(int side)
+    {
+        // Check the three horizontals
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == side && board[i][1] == side && board[i][2] == Controller.EMPTY) {
+                return i * 3 + 2;
+            }
+        }
+        // TODO other two cases
+
+        // Check the three verticals
+        for (int i = 0; i < 3; i++) {
+            if (board[0][i] == side && board[1][i] == side && board[2][i] == Controller.EMPTY) {
+                return i * 2 + 2;
+            }
+        }
+        // TODO other two cases
+
+        // Check the two diagonals
+        if (board[0][0] == side && board[1][1] == side && board[2][2] == Controller.EMPTY) {
+            return 8;
+        }
+        // TODO other two cases
+        if (board[0][2] == side && board[1][1] == side && board[2][0] == Controller.EMPTY) {
+            return 6;
+        }
+        // TODO other two cases
+
+        // No way to make 3-in-a-row...
+        return -1;
+    }
+
     // Compute static value of current position (win, draw, etc.)
     protected int positionValue( )
     {
