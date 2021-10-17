@@ -23,7 +23,7 @@ class Controller
     private Random random = new Random();
 	private int side = random.nextInt(2);
 	private int position = UNCLEAR;
-	private char computerChar, humanChar;
+	protected static char computerChar, humanChar;
 
 	// Constructor
 	public Controller()
@@ -174,29 +174,6 @@ class Controller
 			this.side = COMPUTER;
 		}
 	}
-
-	/**
-	 * Gives a textual representation of the TTT board, for View to render.
-	 * @return String
-	 */
-	public String toString()
-	{
-		String returnString = "";
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				if (board.getContents(i, j) == EMPTY) {
-					returnString += ".";
-				} else if (board.getContents(i, j) == HUMAN) {
-					returnString += this.humanChar;
-				} else {
-					returnString += this.computerChar;
-				}
-
-			}
-			returnString += "\n";
-		}
-		return returnString;
-	}  
 	
 	public boolean gameOver()
 	{

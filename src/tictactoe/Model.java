@@ -1,7 +1,10 @@
 package tictactoe;
 
+/**
+ * Code (c) Hanzehogeschool Groningen
+ */
 public class Model {
-    private int[][] board = new int[3][3];
+    private int[][] board;
 
     public Model() {
         board = new int[3][3];
@@ -49,7 +52,7 @@ public class Model {
         if (isAWin(Controller.COMPUTER)) {
             return Controller.COMPUTER_WIN;
         }
-        if (boardIsFull()) {
+        if (isFull()) {
             return Controller.DRAW;
         }
         return Controller.UNCLEAR;
@@ -64,7 +67,7 @@ public class Model {
         }
     }
 
-    private boolean boardIsFull()
+    private boolean isFull()
     {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -85,5 +88,28 @@ public class Model {
     private boolean squareIsEmpty( int row, int column )
     {
         return board[row][column] == Controller.EMPTY;
+    }
+
+    /**
+     * Gives a textual representation of the TTT board, for View to render.
+     * @return String
+     */
+    public String toString()
+    {
+        String returnString = "";
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == Controller.EMPTY) {
+                    returnString += ".";
+                } else if (board[i][j] == Controller.HUMAN) {
+                    returnString += Controller.humanChar;
+                } else {
+                    returnString += Controller.computerChar;
+                }
+
+            }
+            returnString += "\n";
+        }
+        return returnString;
     }
 }
