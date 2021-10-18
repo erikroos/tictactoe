@@ -9,7 +9,7 @@ class Controller
 {
 	protected static final int HUMAN        = 0;
 	protected static final int COMPUTER     = 1;
-	public  static final int EMPTY          = 2;
+	public    static final int EMPTY        = 2;
 
 	public  static final int HUMAN_WIN    = 0;
 	public  static final int DRAW         = 1;
@@ -135,26 +135,33 @@ class Controller
 	 */
 	protected BestMove chooseMoveHeur(int side) {
 		int opp = (side == COMPUTER) ? HUMAN : COMPUTER; // The other side (in the first call of this method this is always HUMAN)
-		BestMove reply;       // Opponent's best reply
-		int simpleEval;       // Result of an immediate evaluation
-		// For storing the best result so far:
-		int bestRow = 0;
-		int bestColumn = 0;
-		int value = (side == COMPUTER) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
 		// Base case: board is full, we can see directly what the score is
-		simpleEval = board.positionValue();
+		int simpleEval = board.positionValue();
 		if (simpleEval != UNCLEAR) {
 			return new BestMove(simpleEval);
 		}
 
-		// TODO
 		// Rule 1: Prevent opponent from making 3-in-a-row (using canWin with opp)
-		// Rule 2: Make 3-in-a-row if possible (using canWin with side)
-		// Rule 3: Take center if still available
-		// Rule 4: Take random free square
+		int oppMove = board.canWin(opp);
+		if (oppMove > -1) {
+			return new BestMove(Controller.UNCLEAR, oppMove / 3, oppMove % 3);
+		}
 
-		return null;
+		// Rule 2: Make 3-in-a-row if possible (using canWin with side)
+		int ourMove = board.canWin(side);
+		if (ourMove > -1) {
+			return new BestMove(Controller.UNCLEAR, ourMove / 3, ourMove % 3);
+		}
+
+		// Rule 3: Take center if still available
+		if (board.getContents(1, 1) == Controller.EMPTY) {
+			return new BestMove(Controller.UNCLEAR, 1, 1);
+		}
+
+		// Rule 4: Take random free square
+		ourMove = getNextMoves().get(0);
+		return new BestMove(Controller.UNCLEAR, ourMove / 3, ourMove % 3);
 	}
 
     private List<Integer> getNextMoves() {

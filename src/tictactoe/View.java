@@ -1,10 +1,6 @@
 package tictactoe;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.*;
 
 /**
@@ -37,6 +33,8 @@ class View
             return;
         }
         // Local mode
+        System.out.println("Press 1 for AI or 2 for Heuristics: ");
+        boolean useAI = (reader.next()).charAt(0) == '1';
         do {
             System.out.println("*** New game ***\n");
             gameController.init();
@@ -48,7 +46,7 @@ class View
             // The central Game Loop
             while (!gameController.gameOver())
             {
-                int square = move(); // get move from either human or computer
+                int square = move(useAI); // get move from either human or computer
                 gameController.playMove(square);
                 System.out.println(gameController.board);
             }
@@ -61,11 +59,11 @@ class View
         v.start();
     }
     
-    private int move()
+    private int move(boolean useAI)
     {
         if (gameController.computerPlays())
         {
-            int compMove = gameController.chooseMove(true);
+            int compMove = gameController.chooseMove(useAI);
             System.out.println("Computer move = " + compMove);
             return compMove;
         } else {

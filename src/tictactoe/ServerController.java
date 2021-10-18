@@ -25,6 +25,11 @@ public class ServerController {
     }
 
     protected void serverLoop() throws IOException {
+        if (connection == null) {
+            System.out.println("No connection - terminating...");
+            return;
+        }
+
         // TODO: get from config
         String name = "erikroos";
 

@@ -49,28 +49,50 @@ public class Model {
         // Check the three horizontals
         for (int i = 0; i < 3; i++) {
             if (board[i][0] == side && board[i][1] == side && board[i][2] == Controller.EMPTY) {
-                return i * 3 + 2;
+                return i * 3 + 2; // 2, 5 or 8
+            }
+            if (board[i][0] == side && board[i][1] == Controller.EMPTY && board[i][2] == side) {
+                return i * 3 + 1;
+            }
+            if (board[i][0] == Controller.EMPTY && board[i][1] == side && board[i][2] == side) {
+                return i * 3;
             }
         }
-        // TODO other two cases
 
         // Check the three verticals
         for (int i = 0; i < 3; i++) {
             if (board[0][i] == side && board[1][i] == side && board[2][i] == Controller.EMPTY) {
-                return i * 2 + 2;
+                return 6 + i; // 6, 7 or 8
+            }
+            if (board[0][i] == side && board[1][i] == Controller.EMPTY && board[2][i] == side) {
+                return 3 + i; // 3, 4 or 5
+            }
+            if (board[0][i] == Controller.EMPTY && board[1][i] == side && board[2][i] == side) {
+                return i; // 0, 1 or 2
             }
         }
-        // TODO other two cases
 
         // Check the two diagonals
+        // Top left to bottom right
         if (board[0][0] == side && board[1][1] == side && board[2][2] == Controller.EMPTY) {
             return 8;
         }
-        // TODO other two cases
+        if (board[0][0] == side && board[1][1] == Controller.EMPTY && board[2][2] == side) {
+            return 4;
+        }
+        if (board[0][0] == Controller.EMPTY && board[1][1] == side && board[2][2] == side) {
+            return 0;
+        }
+        // Bottom left to top right
         if (board[0][2] == side && board[1][1] == side && board[2][0] == Controller.EMPTY) {
             return 6;
         }
-        // TODO other two cases
+        if (board[0][2] == side && board[1][1] == Controller.EMPTY && board[2][0] == side) {
+            return 4;
+        }
+        if (board[0][2] == Controller.EMPTY && board[1][1] == side && board[2][0] == side) {
+            return 2;
+        }
 
         // No way to make 3-in-a-row...
         return -1;
