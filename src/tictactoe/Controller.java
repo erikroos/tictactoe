@@ -142,24 +142,19 @@ class Controller
 			return new BestMove(simpleEval);
 		}
 
-		// Rule 1: Prevent opponent from making 3-in-a-row (using canWin with opp)
-		int oppMove = board.canWin(opp);
-		if (oppMove > -1) {
-			return new BestMove(Controller.UNCLEAR, oppMove / 3, oppMove % 3);
-		}
-
-		// Rule 2: Make 3-in-a-row if possible (using canWin with side)
+		// Rule 1: Make 3-in-a-row if possible (using canWin with side)
 		int ourMove = board.canWin(side);
 		if (ourMove > -1) {
 			return new BestMove(Controller.UNCLEAR, ourMove / 3, ourMove % 3);
 		}
 
-		// Rule 3: Take center if still available
-		if (board.getContents(1, 1) == Controller.EMPTY) {
-			return new BestMove(Controller.UNCLEAR, 1, 1);
+		// Rule 2: Prevent opponent from making 3-in-a-row (using canWin with opp)
+		int oppMove = board.canWin(opp);
+		if (oppMove > -1) {
+			return new BestMove(Controller.UNCLEAR, oppMove / 3, oppMove % 3);
 		}
 
-		// Rule 4: Take random free square
+		// Rule 3: Take a free square (center or random other if center is taken)
 		ourMove = getNextMoves().get(0);
 		return new BestMove(Controller.UNCLEAR, ourMove / 3, ourMove % 3);
 	}
