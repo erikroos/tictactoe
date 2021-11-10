@@ -37,7 +37,7 @@ public class ServerController {
             return;
         }
 
-        String username = "lyricalgangster"; // TODO: get from config
+        String username = "ITV2Dtutor"; // TODO: get from config
         boolean useAI = true; // TODO: get from config
 
         try {
@@ -86,47 +86,36 @@ public class ServerController {
                     inGame = true;
                     gameController.init();
                     // Set who begins
-                    pattern = Pattern.compile("PLAYERTOMOVE: \"([^\"]+)\"");
-                    matcher = pattern.matcher(info);
-                    if (matcher.find()) {
-                        String mover = matcher.group(1);
-                        if (mover.equals(username)) {
-                            // We start (from the controller's point of view that's the computer)
-                            gameController.setComputerPlays();
-                        } else {
-                            // Opponent starts (from the controller's point of view that's the human)
-                            gameController.setHumanPlays();
-                        }
+                    String mover = getParameterValueFromServerInfo(info, "PLAYERTOMOVE");
+                    if (mover.equals(username)) {
+                        // We start (from the controller's point of view that's the computer)
+                        gameController.setComputerPlays();
+                    } else {
+                        // Opponent starts (from the controller's point of view that's the human)
+                        gameController.setHumanPlays();
                     }
                 }
+                // TODO check for challenge
             } else {
                 // Already in a game
                 if (responseParts.length > 3 && responseParts[2].equals("YOURTURN")) {
                     // We must make a move
                     move = gameController.chooseMove(useAI);
-                    gameController.playMove(move);
                     out.println("move " + move);
                     System.out.println("We made move: " + move);
+                    gameController.playMove(move); // TODO we could integrate this in the next if block
                     gameController.printBoard();
                 } else if (responseParts.length > 3 && responseParts[2].equals("MOVE")) {
                     // Either we or opponent made a move
                     System.out.println("Move was made: " + info);
-                    pattern = Pattern.compile("PLAYER: \"([^\"]+)\"");
-                    matcher = pattern.matcher(info);
-                    if (matcher.find()) {
-                        String mover = matcher.group(1);
-                        if (!mover.equals(username)) {
-                            // Opponent's move, so register
-                            pattern = Pattern.compile("MOVE: \"(\\d)\"");
-                            matcher = pattern.matcher(info);
-                            if (matcher.find()) {
-                                String moveString = matcher.group(1);
-                                move = Integer.parseInt(moveString);
-                                gameController.playMove(move);
-                                System.out.println("Opponent made move: " + move);
-                                gameController.printBoard();
-                            }
-                        }
+                    String mover = getParameterValueFromServerInfo(info, "PLAYER");
+                    if (!mover.equals(username)) {
+                        // Opponent's move, so register
+                        String moveString = getParameterValueFromServerInfo(info, "MOVE");
+                        move = Integer.parseInt(moveString);
+                        System.out.println("Opponent made move: " + move);
+                        gameController.playMove(move);
+                        gameController.printBoard();
                     }
                 } else if (responseParts.length > 3 && responseParts[2].equals("WIN")) {
                     System.out.println("We won! " + info);
@@ -142,10 +131,11 @@ public class ServerController {
 
             if (gameEnded) {
                 Scanner reader = new Scanner(System.in);
-                System.out.print("Another server game? Enter y/n: ");
+                System.out.print("Another server game coming up! Enter y to continue or n to stop now: ");
                 char yn = (reader.next()).charAt(0);
-                if (!(yn == 'y' || yn == 'Y')) {
-                    break;
+                if ((yn == 'n' || yn == 'N')) {
+                    logout(username);
+                    return;
                 }
                 // Game on for the next round!
                 inGame = false;
@@ -153,8 +143,6 @@ public class ServerController {
                 subscribe();
             }
         }
-
-        logout(username);
     }
 
     // Helper methods from here:
@@ -197,5 +185,15 @@ public class ServerController {
         } else {
             System.out.println("Server response was " + response + " instead of OK.");
         }
+    }
+
+    private String getParameterValueFromServerInfo(String info, String param) {
+        String value = null;
+        Pattern pattern = Pattern.compile(param + ": \"([^\"]+)\"");
+        Matcher matcher = pattern.matcher(info);
+        if (matcher.find()) {
+            value = matcher.group(1);
+        }
+        return value;
     }
 }

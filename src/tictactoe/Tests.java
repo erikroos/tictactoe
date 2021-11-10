@@ -8,11 +8,12 @@ public class Tests {
     @Test
     void testChooseMove() {
         Controller testTTT = new Controller();
+        testTTT.init();
         testTTT.setHumanPlays();
         testTTT.playMove(0); // human
         testTTT.playMove(1); // comp
         testTTT.playMove(4); // human
-        testTTT.playMove(7); // comp
+        testTTT.playMove(8); // comp
         testTTT.playMove(6); // human
         testTTT.playMove(3); // comp
         BestMove nextMove = testTTT.chooseMoveAI(Controller.HUMAN);
