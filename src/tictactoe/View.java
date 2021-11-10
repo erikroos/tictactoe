@@ -48,7 +48,7 @@ class View
             {
                 int square = move(useAI); // get move from either human or computer
                 gameController.playMove(square);
-                System.out.println(gameController.board);
+                gameController.printBoard();
             }
             System.out.println("Game over: " + gameController.winner() + " wins");
         } while (nextGame());

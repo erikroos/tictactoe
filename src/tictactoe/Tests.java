@@ -1,10 +1,9 @@
 package tictactoe;
 
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class Tests {
+public class Tests {
 
     @Test
     void testChooseMove() {

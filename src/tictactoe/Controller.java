@@ -202,4 +202,8 @@ class Controller
         else if (this.position==HUMAN_WIN   ) return "human";
         else                                  return "nobody";
     }
+
+	protected void printBoard() {
+		System.out.println(board);
+	}
 }

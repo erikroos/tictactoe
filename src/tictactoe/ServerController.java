@@ -107,7 +107,7 @@ public class ServerController {
                     gameController.playMove(move);
                     out.println("move " + move);
                     System.out.println("We made move: " + move);
-                    System.out.println(gameController.board);
+                    gameController.printBoard();
                 } else if (responseParts.length > 3 && responseParts[2].equals("MOVE")) {
                     // Either we or opponent made a move
                     System.out.println("Move was made: " + info);
@@ -124,7 +124,7 @@ public class ServerController {
                                 move = Integer.parseInt(moveString);
                                 gameController.playMove(move);
                                 System.out.println("Opponent made move: " + move);
-                                System.out.println(gameController.board);
+                                gameController.printBoard();
                             }
                         }
                     }
@@ -166,7 +166,7 @@ public class ServerController {
             System.out.println("Login failed - terminating...");
             return;
         } else {
-            System.out.println("Login succesful");
+            System.out.println("Login successful");
         }
     }
 
@@ -176,6 +176,7 @@ public class ServerController {
 
     private void subscribe() {
         out.println("subscribe tic-tac-toe"); // does not give back OK
+        System.out.println("Subscribed to tic-tac-toe");
     }
 
     private void getGameList() throws IOException {
