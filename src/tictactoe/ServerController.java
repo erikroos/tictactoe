@@ -173,6 +173,7 @@ public class ServerController {
             return false;
         }
         if (!response.equals("OK")) {
+            System.out.println("Login failed: " + response);
             return false;
         } else {
             System.out.println("Login successful");
@@ -196,6 +197,7 @@ public class ServerController {
         if (response != null) {
             System.out.println("Server gave response: " + response);
         }
+        getPlayerList(); // after subscription, show playerlist
         return true;
     }
 
@@ -209,13 +211,18 @@ public class ServerController {
         }
     }
 
-    private void getPlayerList() throws IOException {
+    private void getPlayerList() {
         out.println("get playerlist");
-        String response = in.readLine();
-        if (response.equals("OK")) {
-            System.out.println("Players: " + in.readLine());
-        } else {
-            System.out.println("Server response was " + response + " instead of OK.");
+        String response = null;
+        try {
+            response = in.readLine();
+            if (response.equals("OK")) {
+                System.out.println("Players: " + in.readLine());
+            } else {
+                System.out.println("Server response was " + response + " instead of OK.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error while fetching playerlist");
         }
     }
 
