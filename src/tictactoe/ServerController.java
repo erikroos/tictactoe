@@ -40,23 +40,31 @@ public class ServerController {
         String username = "ITV2Dtutor"; // TODO: get from config
         boolean useAI = true; // TODO: get from config
 
-        try {
-            login(username);
-        } catch (IOException e) {
+        if (!login(username)) {
             System.out.println("Login failed - terminating...");
             return;
         }
 
         // TODO: enable other flow, where we don't subscribe but wait for challenges
-        subscribe();
+        if (!subscribe()) {
+            System.out.println("Subscribe failed - terminating...");
+            return;
+        }
 
+        // Variables we need in the game loop
         Controller gameController = new Controller();
         String response = null;
         boolean inGame = false;
         boolean gameEnded = false;
         int move;
-        Pattern pattern;
-        Matcher matcher;
+        boolean optionToQuit = false; // TODO make settable
+
+        // Result counters
+        int[] results = new int[3];
+        for (int i = 0; i < 3; i++) {
+            results[i] = 0;
+        }
+
         while (true) {
             try {
                 response = in.readLine();
@@ -120,51 +128,75 @@ public class ServerController {
                 } else if (responseParts.length > 3 && responseParts[2].equals("WIN")) {
                     System.out.println("We won! " + info);
                     gameEnded = true;
+                    results[0]++;
                 } else if (responseParts.length > 3 && responseParts[2].equals("LOSS")) {
                     System.out.println("We lost... " + info);
                     gameEnded = true;
+                    results[1]++;
                 } else if (responseParts.length > 3 && responseParts[2].equals("DRAW")) {
                     System.out.println("It's a draw... " + info);
                     gameEnded = true;
+                    results[2]++;
                 }
             }
 
             if (gameEnded) {
-                Scanner reader = new Scanner(System.in);
-                System.out.print("Another server game coming up! Enter y to continue or n to stop now: ");
-                char yn = (reader.next()).charAt(0);
-                if ((yn == 'n' || yn == 'N')) {
-                    logout(username);
-                    return;
+                System.out.println("Overall results (win/loss/draw): " + results[0] + "/" + results[1] + "/" + results[2]);
+                if (optionToQuit) {
+                    Scanner reader = new Scanner(System.in);
+                    System.out.print("Another server game coming up! Enter y to continue or n to stop now: ");
+                    char yn = (reader.next()).charAt(0);
+                    if ((yn == 'n' || yn == 'N')) {
+                        logout(username);
+                        return;
+                    }
                 }
                 // Game on for the next round!
                 inGame = false;
                 gameEnded = false;
-                subscribe();
+                if (!subscribe()) {
+                    System.out.println("Subscribe failed - terminating...");
+                    return;
+                }
             }
         }
     }
 
     // Helper methods from here:
 
-    private void login(String username) throws IOException {
+    private boolean login(String username) {
         out.println("login " + username);
-        String response = in.readLine();
+        String response = null;
+        try {
+            response = in.readLine();
+        } catch (IOException e) {
+            return false;
+        }
         if (!response.equals("OK")) {
-            System.out.println("Login failed - terminating...");
-            return;
+            return false;
         } else {
             System.out.println("Login successful");
         }
+        return true;
     }
 
     private void logout(String username) {
         out.println("logout");
     }
 
-    private void subscribe() {
+    private boolean subscribe() {
         out.println("subscribe tic-tac-toe"); // does not give back OK
+        String response = null;
+        try {
+            response = in.readLine();
+        } catch (IOException e) {
+            return false;
+        }
         System.out.println("Subscribed to tic-tac-toe");
+        if (response != null) {
+            System.out.println("Server gave response: " + response);
+        }
+        return true;
     }
 
     private void getGameList() throws IOException {
