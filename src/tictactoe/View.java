@@ -19,22 +19,25 @@ class View
     }
 
     private void start() {
+        System.out.println("Press 1 for AI or 2 for Heuristics: ");
+        boolean useAI = (reader.next()).charAt(0) == '1';
+
         System.out.println("Press 1 for Server mode or 2 for local game: ");
         char mode = (reader.next()).charAt(0);
+
         // Server mode
         if (mode == '1') {
             // Delegate control to server controller
             try {
-                ServerController sc = new ServerController();
+                ServerController sc = new ServerController(gameController, useAI, "ITV2Dtutor"); // TODO get username from config
                 sc.serverLoop();
             } catch (IOException e) {
-                System.out.println("Server communication failed - terminating...");
+                System.out.println("Server setup failed - terminating...");
             }
             return;
         }
+
         // Local mode
-        System.out.println("Press 1 for AI or 2 for Heuristics: ");
-        boolean useAI = (reader.next()).charAt(0) == '1';
         do {
             System.out.println("*** New game ***\n");
             gameController.init();

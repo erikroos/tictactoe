@@ -13,8 +13,15 @@ public class ServerController {
     Socket connection;
     PrintWriter out;
     BufferedReader in;
+    Controller gameController;
+    boolean useAI;
+    String username;
 
-    public ServerController() throws IOException {
+    public ServerController(Controller gameController, boolean useAI, String username) throws IOException {
+        this.gameController = gameController; // dependency injection
+        this.useAI = useAI;
+        this.username = username;
+
         // TODO: get from config
         String hostName = "145.33.225.170";
         int portNumber = 7789;
@@ -37,9 +44,6 @@ public class ServerController {
             return;
         }
 
-        String username = "ITV2Dtutor"; // TODO: get from config
-        boolean useAI = true; // TODO: get from config
-
         if (!login(username)) {
             System.out.println("Login failed - terminating...");
             return;
@@ -52,7 +56,6 @@ public class ServerController {
         }
 
         // Variables we need in the game loop
-        Controller gameController = new Controller();
         String response = null;
         boolean inGame = false;
         boolean gameEnded = false;
@@ -102,8 +105,15 @@ public class ServerController {
                         // Opponent starts (from the controller's point of view that's the human)
                         gameController.setHumanPlays();
                     }
+                } else if (responseParts.length > 3 && responseParts[2].equals("CHALLENGE")) {
+                    // We've been challenged!
+                    if (getParameterValueFromServerInfo(info, "GAMETYPE").equals("tic-tac-toe")) {
+                        System.out.println("Challenged! " + info);
+                        String challengeNr = getParameterValueFromServerInfo(info, "CHALLENGENUMBER");
+                        out.println("challenge accept " + challengeNr);
+                        // And now we wait for the subsequent MATCH message
+                    }
                 }
-                // TODO check for challenge
             } else {
                 // Already in a game
                 if (responseParts.length > 3 && responseParts[2].equals("YOURTURN")) {
@@ -166,7 +176,7 @@ public class ServerController {
 
     private boolean login(String username) {
         out.println("login " + username);
-        String response = null;
+        String response;
         try {
             response = in.readLine();
         } catch (IOException e) {
@@ -182,21 +192,21 @@ public class ServerController {
     }
 
     private void logout(String username) {
-        out.println("logout");
+        out.println("logout" + username);
     }
 
     private boolean subscribe() {
         out.println("subscribe tic-tac-toe"); // does not give back OK
-        String response = null;
+        String response;
         try {
             response = in.readLine();
+            if (response != null) {
+                System.out.println("Server gave response: " + response);
+            }
         } catch (IOException e) {
             return false;
         }
         System.out.println("Subscribed to tic-tac-toe");
-        if (response != null) {
-            System.out.println("Server gave response: " + response);
-        }
         getPlayerList(); // after subscription, show playerlist
         return true;
     }
@@ -213,11 +223,12 @@ public class ServerController {
 
     private void getPlayerList() {
         out.println("get playerlist");
-        String response = null;
+        String response;
         try {
             response = in.readLine();
             if (response.equals("OK")) {
-                System.out.println("Players: " + in.readLine());
+                String players = in.readLine();
+                System.out.println("Players: " + players);
             } else {
                 System.out.println("Server response was " + response + " instead of OK.");
             }
