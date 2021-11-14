@@ -10,14 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ServerController {
-    Socket connection;
-    PrintWriter out;
-    BufferedReader in;
-    Controller gameController;
-    boolean useAI;
-    String username;
+    private Socket connection;
+    private PrintWriter out;
+    private BufferedReader in;
+    private GameController gameController;
+    private boolean useAI;
+    private String username;
 
-    public ServerController(Controller gameController, boolean useAI, String username) throws IOException {
+    public ServerController(GameController gameController, boolean useAI, String username) throws IOException {
         this.gameController = gameController; // dependency injection
         this.useAI = useAI;
         this.username = username;

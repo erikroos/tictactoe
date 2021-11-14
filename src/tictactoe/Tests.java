@@ -7,7 +7,7 @@ public class Tests {
 
     @Test
     void testChooseMove() {
-        Controller testTTT = new Controller();
+        GameController testTTT = new TicTacToeController();
         testTTT.init();
         testTTT.setHumanPlays();
         testTTT.playMove(0); // human
@@ -16,32 +16,31 @@ public class Tests {
         testTTT.playMove(8); // comp
         testTTT.playMove(6); // human
         testTTT.playMove(3); // comp
-        BestMove nextMove = testTTT.chooseMoveAI(Controller.HUMAN);
-        assertTrue(nextMove.row == 0 && nextMove.column == 2);
+        assertTrue(testTTT.chooseMove(true) == 2);
     }
 
     @Test
     void testIsAWin() {
-        Controller testTTT = new Controller();
+        GameController testTTT = new TicTacToeController();
         testTTT.setHumanPlays();
         testTTT.playMove(0); // human
         testTTT.playMove(1); // comp
         testTTT.playMove(4); // human
         testTTT.playMove(7); // comp
         testTTT.playMove(8); // human
-        assertTrue(testTTT.board.isAWin(Controller.HUMAN));
-        assertFalse(testTTT.board.isAWin(Controller.COMPUTER));
+        assertTrue(testTTT.getBoard().isAWin(TicTacToeController.HUMAN));
+        assertFalse(testTTT.getBoard().isAWin(TicTacToeController.COMPUTER));
     }
 
     @Test
     void testPositionValue() {
-        Controller testTTT = new Controller();
+        GameController testTTT = new TicTacToeController();
         testTTT.setHumanPlays();
         testTTT.playMove(0); // human
         testTTT.playMove(1); // comp
         testTTT.playMove(4); // human
         testTTT.playMove(7); // comp
         testTTT.playMove(8); // human
-        assertTrue(testTTT.board.positionValue() == Controller.HUMAN_WIN);
+        assertTrue(testTTT.getBoard().positionValue() == TicTacToeController.HUMAN_WIN);
     }
 }

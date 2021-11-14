@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Code (c) Hanzehogeschool Groningen
  */
-class Controller
+class TicTacToeController implements GameController
 {
 	protected static final int HUMAN        = 0;
 	protected static final int COMPUTER     = 1;
@@ -16,14 +16,14 @@ class Controller
 	public  static final int UNCLEAR      = 2;
 	public  static final int COMPUTER_WIN = 3;
 
-	protected Model board = new Model();
+	private Model board = new Model();
 
 	private int side;
 	private int position = UNCLEAR;
 	protected static char computerChar, humanChar;
 
 	// Constructor
-	public Controller() {
+	public TicTacToeController() {
 	}
 
 	public void init() {
@@ -145,18 +145,18 @@ class Controller
 		// Rule 1: Make 3-in-a-row if possible (using canWin with side)
 		int ourMove = board.canWin(side);
 		if (ourMove > -1) {
-			return new BestMove(Controller.UNCLEAR, ourMove / 3, ourMove % 3);
+			return new BestMove(TicTacToeController.UNCLEAR, ourMove / 3, ourMove % 3);
 		}
 
 		// Rule 2: Prevent opponent from making 3-in-a-row (using canWin with opp)
 		int oppMove = board.canWin(opp);
 		if (oppMove > -1) {
-			return new BestMove(Controller.UNCLEAR, oppMove / 3, oppMove % 3);
+			return new BestMove(TicTacToeController.UNCLEAR, oppMove / 3, oppMove % 3);
 		}
 
 		// Rule 3: Take a free square (center or random other if center is taken)
 		ourMove = getNextMoves().get(0);
-		return new BestMove(Controller.UNCLEAR, ourMove / 3, ourMove % 3);
+		return new BestMove(TicTacToeController.UNCLEAR, ourMove / 3, ourMove % 3);
 	}
 
     private List<Integer> getNextMoves() {
@@ -203,7 +203,11 @@ class Controller
         else                                  return "nobody";
     }
 
-	protected void printBoard() {
+	public void printBoard() {
 		System.out.println(board);
+	}
+
+	public Model getBoard() {
+		return board;
 	}
 }

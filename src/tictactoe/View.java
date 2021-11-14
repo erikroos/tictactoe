@@ -11,11 +11,11 @@ import java.util.*;
 class View
 {
     private Scanner reader;
-    private Controller gameController;
+    private TicTacToeController gameController;
  
     public View() {
         reader = new Scanner(System.in);
-        gameController = new Controller();
+        gameController = new TicTacToeController();
     }
 
     private void start() {
