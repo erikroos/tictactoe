@@ -161,15 +161,9 @@ class TicTacToeController implements GameController
 
     private List<Integer> getNextMoves() {
 		List<Integer> moves = new ArrayList<>();
-		// Find all clear squares: start with center (4) and put the rest in random order
-		Integer[] squaresArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-		List<Integer> squares = Arrays.asList(squaresArray);
-		Collections.shuffle(squares);
-		int i = squares.indexOf(4);
-		squares.set(i, squares.get(0));
-		squares.set(0, 4);
-		// Now find the clear squares
-		for (int pos : squares) {
+		// Find all clear squares: start with the corners, then center (4), and then the rest
+		Integer[] squaresArray = {0, 2, 6, 8, 4, 1, 3, 5, 7};
+		for (int pos : squaresArray) {
 			if (board.getContents(pos / 3, pos % 3) == EMPTY) {
 				moves.add(pos);
 			}
