@@ -5,25 +5,13 @@ import java.util.*;
 /**
  * Code (c) Hanzehogeschool Groningen
  */
-class TicTacToeController implements GameController
+class TicTacToeController extends GameController
 {
-	protected static final int HUMAN        = 0;
-	protected static final int COMPUTER     = 1;
-	public    static final int EMPTY        = 2;
-
-	public  static final int HUMAN_WIN    = 0;
-	public  static final int DRAW         = 1;
-	public  static final int UNCLEAR      = 2;
-	public  static final int COMPUTER_WIN = 3;
-
-	private Model board = new Model();
-
-	private int side;
-	private int position = UNCLEAR;
-	protected static char computerChar, humanChar;
-
 	// Constructor
-	public TicTacToeController() {}
+	public TicTacToeController(Model board) {
+		super(board);
+		NAME = "Tic Tac Toe";
+	}
 
 	public void init() {
 		board.clear();
@@ -40,6 +28,7 @@ class TicTacToeController implements GameController
 			computerChar = 'O';
 			humanChar = 'X';
 		}
+		board.setChars(computerChar, humanChar);
     }
     
     public void setComputerPlays() {
@@ -94,6 +83,7 @@ class TicTacToeController implements GameController
 		}
 
 		// Backtrack case: try all open moves and see which is best
+		// TODO add pruning
 		for (int move : getNextMoves()) {
 			// Try this move for the current player
 			board.putMove(move / 3, move % 3, side);
@@ -177,14 +167,12 @@ class TicTacToeController implements GameController
 		}
 	}
 	
-	public boolean gameOver()
-	{
+	public boolean gameOver() {
 	    this.position = board.positionValue();
 	    return this.position != UNCLEAR;
     }
     
-    public String winner()
-    {
+    public String winner() {
         if      (this.position==COMPUTER_WIN) return "computer";
         else if (this.position==HUMAN_WIN   ) return "human";
         else                                  return "nobody";
@@ -196,5 +184,10 @@ class TicTacToeController implements GameController
 
 	public Model getBoard() {
 		return board;
+	}
+
+	@Override
+	public int coordsToNUmber(int x, int y) {
+		return x * 3 + y;
 	}
 }

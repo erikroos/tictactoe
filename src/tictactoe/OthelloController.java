@@ -1,6 +1,11 @@
 package tictactoe;
 
-public class OthelloController implements GameController {
+public class OthelloController extends GameController {
+    public OthelloController(Model board) {
+        super(board);
+        NAME = "Othello";
+    }
+
     @Override
     public void init() {
 
@@ -54,5 +59,10 @@ public class OthelloController implements GameController {
     @Override
     public boolean moveOk(int move) {
         return false;
+    }
+
+    @Override
+    public int coordsToNUmber(int x, int y) {
+        return 0;
     }
 }

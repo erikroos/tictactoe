@@ -12,6 +12,11 @@ class View
 {
     private Scanner reader;
     private GameController gameController;
+
+    public static void main(String[] args) {
+        View v = new View();
+        v.start();
+    }
  
     public View() {
         reader = new Scanner(System.in);
@@ -21,7 +26,7 @@ class View
         System.out.println("Press 1 for Tic Tac Toe or 2 for Othello: ");
         switch(reader.next().charAt(0)) {
             case '1':
-                gameController = new TicTacToeController(); // TODO use factory
+                gameController = new TicTacToeController(new Model()); // TODO use factory
                 break;
             case '2':
             default:
@@ -32,11 +37,11 @@ class View
         System.out.println("Press 1 for AI or 2 for Heuristics: ");
         boolean useAI = (reader.next()).charAt(0) == '1';
 
-        System.out.println("Press 1 for Server mode or 2 for local game: ");
+        System.out.println("Press 1 for local or 2 for server game: ");
         char mode = (reader.next()).charAt(0);
 
         // Server mode
-        if (mode == '1') {
+        if (mode == '2') {
             // Delegate control to server controller
             try {
                 ServerController sc = new ServerController(gameController, useAI, "ITV2Dtutor"); // TODO get username from config
@@ -49,13 +54,15 @@ class View
 
         // Local mode
         do {
-            System.out.println("*** New game ***\n");
+            System.out.println("*** New game of " + gameController.NAME + " ***\n");
             gameController.init();
             if (gameController.computerPlays()) {
                 System.out.println("I start:\n");
             } else {
                 System.out.println("You start:\n");
             }
+            gameController.printBoard();
+
             // The central Game Loop
             while (!gameController.gameOver())
             {
@@ -65,11 +72,6 @@ class View
             }
             System.out.println("Game over: " + gameController.winner() + " wins");
         } while (nextGame());
-    }
-    
-    public static void main(String[] args) {
-        View v = new View();
-        v.start();
     }
     
     private int move(boolean useAI)
@@ -82,8 +84,11 @@ class View
         } else {
             int humanMove;
             do {
-                System.out.print("Human move (enter number for position: 012-345-678) = ");
-                humanMove = reader.nextInt();
+                System.out.print("Your move please. X = ");
+                int x = reader.nextInt();
+                System.out.print("Y = ");
+                int y = reader.nextInt();
+                humanMove = gameController.coordsToNUmber(x, y);
             } while (!gameController.moveOk(humanMove));
             return humanMove;
         }

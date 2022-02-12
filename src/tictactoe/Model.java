@@ -5,9 +5,15 @@ package tictactoe;
  */
 public class Model {
     private int[][] board;
+    private char computerChar, humanChar;
 
     public Model() {
         board = new int[3][3];
+    }
+
+    public void setChars(char computerChar, char humanChar) {
+        this.computerChar = computerChar;
+        this.humanChar = humanChar;
     }
 
     public void putMove(int x, int y, int side) {
@@ -48,49 +54,49 @@ public class Model {
     {
         // Check the three horizontals
         for (int i = 0; i < 3; i++) {
-            if (board[i][0] == side && board[i][1] == side && board[i][2] == TicTacToeController.EMPTY) {
+            if (board[i][0] == side && board[i][1] == side && board[i][2] == GameController.EMPTY) {
                 return i * 3 + 2; // 2, 5 or 8
             }
-            if (board[i][0] == side && board[i][1] == TicTacToeController.EMPTY && board[i][2] == side) {
+            if (board[i][0] == side && board[i][1] == GameController.EMPTY && board[i][2] == side) {
                 return i * 3 + 1;
             }
-            if (board[i][0] == TicTacToeController.EMPTY && board[i][1] == side && board[i][2] == side) {
+            if (board[i][0] == GameController.EMPTY && board[i][1] == side && board[i][2] == side) {
                 return i * 3;
             }
         }
 
         // Check the three verticals
         for (int i = 0; i < 3; i++) {
-            if (board[0][i] == side && board[1][i] == side && board[2][i] == TicTacToeController.EMPTY) {
+            if (board[0][i] == side && board[1][i] == side && board[2][i] == GameController.EMPTY) {
                 return 6 + i; // 6, 7 or 8
             }
-            if (board[0][i] == side && board[1][i] == TicTacToeController.EMPTY && board[2][i] == side) {
+            if (board[0][i] == side && board[1][i] == GameController.EMPTY && board[2][i] == side) {
                 return 3 + i; // 3, 4 or 5
             }
-            if (board[0][i] == TicTacToeController.EMPTY && board[1][i] == side && board[2][i] == side) {
+            if (board[0][i] == GameController.EMPTY && board[1][i] == side && board[2][i] == side) {
                 return i; // 0, 1 or 2
             }
         }
 
         // Check the two diagonals
         // Top left to bottom right
-        if (board[0][0] == side && board[1][1] == side && board[2][2] == TicTacToeController.EMPTY) {
+        if (board[0][0] == side && board[1][1] == side && board[2][2] == GameController.EMPTY) {
             return 8;
         }
-        if (board[0][0] == side && board[1][1] == TicTacToeController.EMPTY && board[2][2] == side) {
+        if (board[0][0] == side && board[1][1] == GameController.EMPTY && board[2][2] == side) {
             return 4;
         }
-        if (board[0][0] == TicTacToeController.EMPTY && board[1][1] == side && board[2][2] == side) {
+        if (board[0][0] == GameController.EMPTY && board[1][1] == side && board[2][2] == side) {
             return 0;
         }
         // Bottom left to top right
-        if (board[0][2] == side && board[1][1] == side && board[2][0] == TicTacToeController.EMPTY) {
+        if (board[0][2] == side && board[1][1] == side && board[2][0] == GameController.EMPTY) {
             return 6;
         }
-        if (board[0][2] == side && board[1][1] == TicTacToeController.EMPTY && board[2][0] == side) {
+        if (board[0][2] == side && board[1][1] == GameController.EMPTY && board[2][0] == side) {
             return 4;
         }
-        if (board[0][2] == TicTacToeController.EMPTY && board[1][1] == side && board[2][0] == side) {
+        if (board[0][2] == GameController.EMPTY && board[1][1] == side && board[2][0] == side) {
             return 2;
         }
 
@@ -99,34 +105,31 @@ public class Model {
     }
 
     // Compute static value of current position (win, draw, etc.)
-    protected int positionValue( )
-    {
-        if (isAWin(TicTacToeController.HUMAN)) {
-            return TicTacToeController.HUMAN_WIN;
+    protected int positionValue() {
+        if (isAWin(GameController.HUMAN)) {
+            return GameController.HUMAN_WIN;
         }
-        if (isAWin(TicTacToeController.COMPUTER)) {
-            return TicTacToeController.COMPUTER_WIN;
+        if (isAWin(GameController.COMPUTER)) {
+            return GameController.COMPUTER_WIN;
         }
         if (isFull()) {
-            return TicTacToeController.DRAW;
+            return GameController.DRAW;
         }
-        return TicTacToeController.UNCLEAR;
+        return GameController.UNCLEAR;
     }
 
-    public void clear()
-    {
+    public void clear() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                board[i][j] = TicTacToeController.EMPTY;
+                board[i][j] = GameController.EMPTY;
             }
         }
     }
 
-    private boolean isFull()
-    {
+    private boolean isFull() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (board[i][j] == TicTacToeController.EMPTY) {
+                if (board[i][j] == GameController.EMPTY) {
                     return false;
                 }
             }
@@ -134,32 +137,22 @@ public class Model {
         return true;
     }
 
-    // Play a move, possibly clearing a square
-    private void place( int row, int column, int piece )
-    {
-        board[row][column] = piece;
-    }
-
-    private boolean squareIsEmpty( int row, int column )
-    {
-        return board[row][column] == TicTacToeController.EMPTY;
-    }
-
     /**
-     * Gives a textual representation of the TTT board, for View to render.
+     * Gives a textual representation of the board, for View to render.
      * @return String
      */
     public String toString()
     {
-        String returnString = "";
+        String returnString = "    0 1 2\n---------\n";
         for (int i = 0; i < 3; i++) {
+            returnString += i + " |";
             for (int j = 0; j < 3; j++) {
-                if (board[i][j] == TicTacToeController.EMPTY) {
-                    returnString += ".";
-                } else if (board[i][j] == TicTacToeController.HUMAN) {
-                    returnString += TicTacToeController.humanChar;
+                if (board[i][j] == GameController.EMPTY) {
+                    returnString += " .";
+                } else if (board[i][j] == GameController.HUMAN) {
+                    returnString += " " + humanChar;
                 } else {
-                    returnString += TicTacToeController.computerChar;
+                    returnString += " " + computerChar;
                 }
 
             }
