@@ -11,14 +11,24 @@ import java.util.*;
 class View
 {
     private Scanner reader;
-    private TicTacToeController gameController;
+    private GameController gameController;
  
     public View() {
         reader = new Scanner(System.in);
-        gameController = new TicTacToeController();
     }
 
     private void start() {
+        System.out.println("Press 1 for Tic Tac Toe or 2 for Othello: ");
+        switch(reader.next().charAt(0)) {
+            case '1':
+                gameController = new TicTacToeController(); // TODO use factory
+                break;
+            case '2':
+            default:
+                gameController = new OthelloController(); // TODO use factory
+        }
+
+
         System.out.println("Press 1 for AI or 2 for Heuristics: ");
         boolean useAI = (reader.next()).charAt(0) == '1';
 

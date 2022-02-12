@@ -23,8 +23,7 @@ class TicTacToeController implements GameController
 	protected static char computerChar, humanChar;
 
 	// Constructor
-	public TicTacToeController() {
-	}
+	public TicTacToeController() {}
 
 	public void init() {
 		board.clear();
@@ -33,8 +32,7 @@ class TicTacToeController implements GameController
 		initSide();
 	}
 	
-	private void initSide()
-	{
+	private void initSide() {
 	    if (this.side == COMPUTER) {
 			computerChar = 'X';
 			humanChar = 'O';
@@ -44,14 +42,12 @@ class TicTacToeController implements GameController
 		}
     }
     
-    public void setComputerPlays()
-    {
+    public void setComputerPlays() {
         this.side = COMPUTER;
         initSide();
     }
     
-    public void setHumanPlays()
-    {
+    public void setHumanPlays() {
         this.side = HUMAN;
         initSide();
     }
@@ -62,13 +58,11 @@ class TicTacToeController implements GameController
 	}
 
 	// Check if move is legal
-	public boolean moveOk(int move)
-	{
+	public boolean moveOk(int move) {
 		return (move >= 0 && move <= 8 && board.getContents(move / 3, move % 3) == EMPTY);
 	}
 
-	public int chooseMove(boolean useAI)
-	{
+	public int chooseMove(boolean useAI) {
 		BestMove best;
 		if (useAI) {
 			best = chooseMoveAI(COMPUTER);
@@ -84,8 +78,7 @@ class TicTacToeController implements GameController
 	 * @param side
 	 * @return BestMove
 	 */
-	protected BestMove chooseMoveAI(int side)
-	{
+	protected BestMove chooseMoveAI(int side) {
 		int opp = (side == COMPUTER) ? HUMAN : COMPUTER; // The other side (in the first call of this method this is always HUMAN)
 		BestMove reply;       // Opponent's best reply
 		int simpleEval;       // Result of an immediate evaluation

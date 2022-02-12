@@ -196,11 +196,15 @@ public class ServerController {
             }
         } else if (responseParts.length > 3 && responseParts[2].equals("CHALLENGE")) {
             // We've been challenged!
-            if (getParameterValueFromServerInfo(info, "GAMETYPE").equals("tic-tac-toe")) {
+            if (getParameterValueFromServerInfo(info, "GAMETYPE") != null &&
+                    getParameterValueFromServerInfo(info, "GAMETYPE").equals("tic-tac-toe")
+            ) {
                 System.out.println("Challenged! " + info);
                 String challengeNr = getParameterValueFromServerInfo(info, "CHALLENGENUMBER");
                 out.println("challenge accept " + challengeNr);
                 // And now we wait for the subsequent MATCH message
+            } else {
+                System.out.println("Challenge with no or invalid gametype: " + info);
             }
         } else if (responseParts[0].equals("OK")) {
             // Trailing OK, probably from subscribe: ignore
