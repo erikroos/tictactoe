@@ -1,40 +1,24 @@
-package tictactoe;
+package tictactoe.model;
 
-/**
- * Code (c) Hanzehogeschool Groningen
- */
-public class Model {
-    private int[][] board;
-    private char computerChar, humanChar;
+import tictactoe.controller.GameController;
 
-    public Model() {
-        board = new int[3][3];
-    }
-
-    public void setChars(char computerChar, char humanChar) {
-        this.computerChar = computerChar;
-        this.humanChar = humanChar;
-    }
-
-    public void putMove(int x, int y, int side) {
-        board[x][y] = side;
-    }
-
-    public int getContents(int x, int y) {
-        return board[x][y];
+public class TicTacToeModel extends Model {
+    public TicTacToeModel(int horizontalSize, int verticalSize) {
+        super(horizontalSize, verticalSize);
     }
 
     // Returns whether 'side' has won in this position
-    protected boolean isAWin(int side)
+    // TODO make completely size-independent
+    public boolean isAWin(int side)
     {
         // Check the three horizontals
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < this.horizontalSize; i++) {
             if (board[i][0] == side && board[i][1] == side && board[i][2] == side) {
                 return true;
             }
         }
         // Check the three verticals
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < this.verticalSize; i++) {
             if (board[0][i] == side && board[1][i] == side && board[2][i] == side) {
                 return true;
             }
@@ -50,10 +34,11 @@ public class Model {
     }
 
     // Returns move that 'side' can make to win in this position
-    protected int canWin(int side)
+    // TODO make completely size-independent
+    public int canWin(int side)
     {
         // Check the three horizontals
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < this.horizontalSize; i++) {
             if (board[i][0] == side && board[i][1] == side && board[i][2] == GameController.EMPTY) {
                 return i * 3 + 2; // 2, 5 or 8
             }
@@ -66,7 +51,7 @@ public class Model {
         }
 
         // Check the three verticals
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < this.verticalSize; i++) {
             if (board[0][i] == side && board[1][i] == side && board[2][i] == GameController.EMPTY) {
                 return 6 + i; // 6, 7 or 8
             }
@@ -100,64 +85,7 @@ public class Model {
             return 2;
         }
 
-        // No way to make 3-in-a-row...
+        // No way to make N-in-a-row...
         return -1;
-    }
-
-    // Compute static value of current position (win, draw, etc.)
-    protected int positionValue() {
-        if (isAWin(GameController.HUMAN)) {
-            return GameController.HUMAN_WIN;
-        }
-        if (isAWin(GameController.COMPUTER)) {
-            return GameController.COMPUTER_WIN;
-        }
-        if (isFull()) {
-            return GameController.DRAW;
-        }
-        return GameController.UNCLEAR;
-    }
-
-    public void clear() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                board[i][j] = GameController.EMPTY;
-            }
-        }
-    }
-
-    private boolean isFull() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i][j] == GameController.EMPTY) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Gives a textual representation of the board, for View to render.
-     * @return String
-     */
-    public String toString()
-    {
-        String returnString = "    0 1 2\n---------\n";
-        for (int i = 0; i < 3; i++) {
-            returnString += i + " |";
-            for (int j = 0; j < 3; j++) {
-                if (board[i][j] == GameController.EMPTY) {
-                    returnString += " .";
-                } else if (board[i][j] == GameController.HUMAN) {
-                    returnString += " " + humanChar;
-                } else {
-                    returnString += " " + computerChar;
-                }
-
-            }
-            returnString += "\n";
-        }
-        return returnString;
     }
 }

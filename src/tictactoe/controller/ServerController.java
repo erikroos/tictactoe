@@ -1,4 +1,6 @@
-package tictactoe;
+package tictactoe.controller;
+
+import tictactoe.controller.GameController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,13 +16,11 @@ public class ServerController {
     private PrintWriter out;
     private BufferedReader in;
     private GameController gameController;
-    private boolean useAI;
     private String username;
     private boolean inGame;
 
-    public ServerController(GameController gameController, boolean useAI, String username) throws IOException {
+    public ServerController(GameController gameController, String username) throws IOException {
         this.gameController = gameController; // dependency injection
-        this.useAI = useAI;
         this.username = username;
 
         // TODO: get from config
@@ -39,7 +39,7 @@ public class ServerController {
      * The loop that controls automatic gameplay on the server.
      * Currently supports one game of Tic-Tac-Toe.
      */
-    protected void serverLoop() {
+    public void serverLoop() {
         if (connection == null) {
             System.out.println("No connection - terminating...");
             return;
@@ -219,7 +219,7 @@ public class ServerController {
 
         if (responseParts.length > 3 && responseParts[2].equals("YOURTURN")) {
             // We must make a move
-            move = gameController.chooseMove(useAI);
+            move = gameController.chooseMove();
             out.println("move " + move);
             System.out.println("We made move: " + move);
             gameController.playMove(move); // TODO we could integrate this in the next if block

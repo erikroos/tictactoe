@@ -1,26 +1,20 @@
-package tictactoe;
+package tictactoe.controller;
+
+import tictactoe.model.TicTacToeModel;
 
 import java.util.*;
 
 /**
  * Code (c) Hanzehogeschool Groningen
  */
-class TicTacToeController extends GameController
+public class TicTacToeController extends GameController
 {
-	// Constructor
-	public TicTacToeController(Model board) {
+	public TicTacToeController(TicTacToeModel board) {
 		super(board);
 		NAME = "Tic Tac Toe";
 	}
-
-	public void init() {
-		board.clear();
-		Random random = new Random();
-		side = random.nextInt(2);
-		initSide();
-	}
 	
-	private void initSide() {
+	public void initSide() {
 	    if (this.side == COMPUTER) {
 			computerChar = 'X';
 			humanChar = 'O';
@@ -30,34 +24,15 @@ class TicTacToeController extends GameController
 		}
 		board.setChars(computerChar, humanChar);
     }
-    
-    public void setComputerPlays() {
-        this.side = COMPUTER;
-        initSide();
-    }
-    
-    public void setHumanPlays() {
-        this.side = HUMAN;
-        initSide();
-    }
-
-	public boolean computerPlays()
-	{
-		return side == COMPUTER;
-	}
 
 	// Check if move is legal
 	public boolean moveOk(int move) {
-		return (move >= 0 && move <= 8 && board.getContents(move / 3, move % 3) == EMPTY);
+		int maxSquare = this.board.horizontalSize * this.board.verticalSize;
+		return (move >= 0 && move < maxSquare && board.getContents(move / this.board.horizontalSize, move % this.board.horizontalSize) == EMPTY);
 	}
 
-	public int chooseMove(boolean useAI) {
-		BestMove best;
-		if (useAI) {
-			best = chooseMoveAI(COMPUTER);
-		} else {
-			best = chooseMoveHeur(COMPUTER);
-		}
+	public int chooseMove() {
+		BestMove best = chooseMove(COMPUTER);
 	    return best.row * 3 + best.column;
     }
 
@@ -67,7 +42,7 @@ class TicTacToeController extends GameController
 	 * @param side
 	 * @return BestMove
 	 */
-	protected BestMove chooseMoveAI(int side) {
+	protected BestMove chooseMove(int side) {
 		int opp = (side == COMPUTER) ? HUMAN : COMPUTER; // The other side (in the first call of this method this is always HUMAN)
 		BestMove reply;       // Opponent's best reply
 		int simpleEval;       // Result of an immediate evaluation
@@ -84,11 +59,11 @@ class TicTacToeController extends GameController
 
 		// Backtrack case: try all open moves and see which is best
 		// TODO add pruning
-		for (int move : getNextMoves()) {
+		for (int move : getAvailableMoves()) {
 			// Try this move for the current player
 			board.putMove(move / 3, move % 3, side);
 			// Now see what the opponent is going to do
-			reply = chooseMoveAI(opp); // Recursion!
+			reply = chooseMove(opp); // Recursion!
 			if (side == HUMAN) {
 				// Human, minimizing
 				if (reply.val < value) {
@@ -105,13 +80,14 @@ class TicTacToeController extends GameController
 				}
 			}
 			// Undo move
-			board.putMove(move / 3, move % 3, EMPTY);
+			board.putMove(move / this.board.horizontalSize, move % this.board.horizontalSize, EMPTY);
 		}
 		return new BestMove(value, bestRow, bestColumn);
     }
 
 	/**
 	 * Find optimal move using simple heuristics.
+	 * Not used atm.
 	 *
 	 * @param side
 	 * @return BestMove
@@ -125,69 +101,32 @@ class TicTacToeController extends GameController
 			return new BestMove(simpleEval);
 		}
 
-		// Rule 1: Make 3-in-a-row if possible (using canWin with side)
+		// Rule 1: Make N-in-a-row if possible (using canWin with side)
 		int ourMove = board.canWin(side);
 		if (ourMove > -1) {
-			return new BestMove(TicTacToeController.UNCLEAR, ourMove / 3, ourMove % 3);
+			return new BestMove(TicTacToeController.UNCLEAR, ourMove / this.board.horizontalSize, ourMove % this.board.horizontalSize);
 		}
 
-		// Rule 2: Prevent opponent from making 3-in-a-row (using canWin with opp)
+		// Rule 2: Prevent opponent from making N-in-a-row (using canWin with opp)
 		int oppMove = board.canWin(opp);
 		if (oppMove > -1) {
-			return new BestMove(TicTacToeController.UNCLEAR, oppMove / 3, oppMove % 3);
+			return new BestMove(TicTacToeController.UNCLEAR, oppMove / this.board.horizontalSize, oppMove % this.board.horizontalSize);
 		}
 
-		// Rule 3: Take a free square (center or random other if center is taken)
-		ourMove = getNextMoves().get(0);
-		return new BestMove(TicTacToeController.UNCLEAR, ourMove / 3, ourMove % 3);
+		// Rule 3: Take a free square
+		ourMove = getAvailableMoves().get(0);
+		return new BestMove(TicTacToeController.UNCLEAR, ourMove / this.board.horizontalSize, ourMove % this.board.horizontalSize);
 	}
 
-    private List<Integer> getNextMoves() {
+    public List<Integer> getAvailableMoves() {
 		List<Integer> moves = new ArrayList<>();
 		// Find all clear squares: start with the corners, then center (4), and then the rest
 		Integer[] squaresArray = {0, 2, 6, 8, 4, 1, 3, 5, 7};
 		for (int pos : squaresArray) {
-			if (board.getContents(pos / 3, pos % 3) == EMPTY) {
+			if (board.getContents(pos / this.board.horizontalSize, pos % this.board.horizontalSize) == EMPTY) {
 				moves.add(pos);
 			}
 		}
 		return moves;
-	}
-    
-    // Play move
-    public void playMove(int move)
-    {
-		// Put X or O on chosen tile
-		board.putMove(move / 3, move % 3, this.side);
-		// Switch side
-		if (side == COMPUTER) {
-			this.side = HUMAN;
-		}  else {
-			this.side = COMPUTER;
-		}
-	}
-	
-	public boolean gameOver() {
-	    this.position = board.positionValue();
-	    return this.position != UNCLEAR;
-    }
-    
-    public String winner() {
-        if      (this.position==COMPUTER_WIN) return "computer";
-        else if (this.position==HUMAN_WIN   ) return "human";
-        else                                  return "nobody";
-    }
-
-	public void printBoard() {
-		System.out.println(board);
-	}
-
-	public Model getBoard() {
-		return board;
-	}
-
-	@Override
-	public int coordsToNUmber(int x, int y) {
-		return x * 3 + y;
 	}
 }
