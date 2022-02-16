@@ -1,6 +1,10 @@
 package tictactoe.model;
 
+import tictactoe.Helper;
 import tictactoe.controller.GameController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TicTacToeModel extends Model {
     public TicTacToeModel(int horizontalSize, int verticalSize) {
@@ -87,5 +91,35 @@ public class TicTacToeModel extends Model {
 
         // No way to make N-in-a-row...
         return -1;
+    }
+
+    public List<Integer> getAvailableMoves() {
+        List<Integer> moves = new ArrayList<>();
+        // Find all clear squares: start with the corners, then center (4), and then the rest
+        Integer[] squaresArray = {0, 2, 6, 8, 4, 1, 3, 5, 7};
+        for (int pos : squaresArray) {
+            if (moveOk(pos)) {
+                //System.out.println("Adding " + pos + " to possible moves");
+                moves.add(pos);
+            }
+        }
+        return moves;
+    }
+
+    @Override
+    public boolean moveOk(int move) {
+        int maxSquare = this.horizontalSize * this.verticalSize;
+        // Check 1: move is within board
+        if (move < 0 && move >= maxSquare) {
+            //System.out.println("Move " + move + " is outside the board");
+            return false;
+        }
+        // Check 2: square is empty
+        int[] coords = Helper.moveToCoords(move, this.horizontalSize);
+        if (getContents(coords[0], coords[1]) != GameController.EMPTY) {
+            //System.out.println("Square " + move + " (" + coords[0] + ", " + coords[1] + ") is not empty: " + getContents(coords[0], coords[1]));
+            return false;
+        }
+        return true;
     }
 }

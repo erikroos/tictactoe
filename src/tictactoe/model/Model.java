@@ -1,6 +1,9 @@
 package tictactoe.model;
 
+import tictactoe.Helper;
 import tictactoe.controller.GameController;
+
+import java.util.List;
 
 /**
  * Code (c) Hanzehogeschool Groningen
@@ -29,10 +32,6 @@ public abstract class Model {
     public int getContents(int x, int y) {
         return board[x][y];
     }
-
-    public abstract boolean isAWin(int side);
-
-    public abstract int canWin(int side);
 
     // Compute static value of current position (win, draw, etc.)
     public int positionValue() {
@@ -73,21 +72,28 @@ public abstract class Model {
      */
     public String toString()
     {
+        int move;
+        List<Integer> possibleMoves = getAvailableMoves();
         String returnString = "    ";
-        for (int j = 0; j < this.horizontalSize; j++) {
-            returnString += j + " ";
+        for (int x = 0; x < this.horizontalSize; x++) {
+            returnString += x + " ";
         }
         returnString += "\n---";
-        for (int j = 0; j < this.horizontalSize; j++) {
+        for (int x = 0; x < this.horizontalSize; x++) {
             returnString += "--";
         }
         returnString += "\n";
-        for (int i = 0; i < this.verticalSize; i++) {
-            returnString += i + " |";
-            for (int j = 0; j < this.horizontalSize; j++) {
-                if (board[i][j] == GameController.EMPTY) {
-                    returnString += " .";
-                } else if (board[i][j] == GameController.HUMAN) {
+        for (int y = 0; y < this.verticalSize; y++) {
+            returnString += y + " |";
+            for (int x = 0; x < this.horizontalSize; x++) {
+                if (board[x][y] == GameController.EMPTY) {
+                    move = Helper.coordsToMove(x, y, this.horizontalSize);
+                    if (possibleMoves.contains(move)) {
+                        returnString += " *";
+                    } else {
+                        returnString += " .";
+                    }
+                } else if (board[x][y] == GameController.HUMAN) {
                     returnString += " " + humanChar;
                 } else {
                     returnString += " " + computerChar;
@@ -98,4 +104,9 @@ public abstract class Model {
         }
         return returnString;
     }
+
+    public abstract boolean isAWin(int side);
+    public abstract int canWin(int side);
+    public abstract List<Integer> getAvailableMoves();
+    public abstract boolean moveOk(int move);
 }

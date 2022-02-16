@@ -33,30 +33,10 @@ public class OthelloController extends GameController {
         board.putMove(4, 4, opp);
     }
 
-    public List<Integer> getAvailableMoves() {
-        int move;
-        List<Integer> moves = new ArrayList<>();
-        for (int x = 0; x < this.board.horizontalSize; x++) {
-            for (int y = 0; y < this.board.verticalSize; y++) {
-                move = x * this.board.horizontalSize + y;
-                if (moveOk(move)) {
-                    moves.add(move);
-                }
-            }
-        }
-        return moves;
-    }
-
     public int chooseMove() {
-        List<Integer> moves = getAvailableMoves();
+        List<Integer> moves = board.getAvailableMoves();
         Random random = new Random();
         int randIndex = random.nextInt(moves.size()); // TODO smarter
         return moves.get(randIndex);
-    }
-
-    public boolean moveOk(int move) {
-        int maxSquare = this.board.horizontalSize * this.board.verticalSize;
-        return (move >= 0 && move < maxSquare && board.getContents(move / this.board.horizontalSize, move % this.board.horizontalSize) == EMPTY);
-        // TODO add extra checks for Othello
     }
 }

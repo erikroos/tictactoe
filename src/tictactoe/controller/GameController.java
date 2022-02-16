@@ -1,8 +1,8 @@
 package tictactoe.controller;
 
+import tictactoe.Helper;
 import tictactoe.model.Model;
 
-import java.util.List;
 import java.util.Random;
 
 public abstract class GameController {
@@ -67,13 +67,10 @@ public abstract class GameController {
         return board;
     }
 
-    public int coordsToNUmber(int x, int y) {
-        return y * this.board.horizontalSize + x;
-    }
-
     public void playMove(int move) {
         // Put X or O, or B or W on chosen tile
-        board.putMove(move / this.board.horizontalSize, move % this.board.verticalSize, this.side);
+        int[] coords = Helper.moveToCoords(move, this.board.horizontalSize);
+        board.putMove(coords[0], coords[1], this.side);
         // Switch side
         if (side == COMPUTER) {
             this.side = HUMAN;
@@ -83,7 +80,5 @@ public abstract class GameController {
     }
 
     public abstract void initSide();
-    public abstract List<Integer> getAvailableMoves();
     public abstract int chooseMove();
-    public abstract boolean moveOk(int move);
 }

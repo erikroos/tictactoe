@@ -1,5 +1,6 @@
 package tictactoe.view;
 
+import tictactoe.Helper;
 import tictactoe.controller.*;
 import tictactoe.model.Model;
 import tictactoe.model.OthelloModel;
@@ -92,22 +93,25 @@ class View
     
     private int move()
     {
+        int move;
         if (gameController.computerPlays())
         {
-            int compMove = gameController.chooseMove();
-            System.out.println("Computer move = " + compMove);
-            return compMove;
+            move = gameController.chooseMove();
+            System.out.println("Computer move = " + move);
+            if (!gameController.getBoard().moveOk(move)) {
+                System.out.println("Illegal move from computer! This is impossible... bailing out!");
+                System.exit(-1);
+            }
         } else {
-            int humanMove;
             do {
                 System.out.print("Your move please. X = ");
                 int x = reader.nextInt();
                 System.out.print("Y = ");
                 int y = reader.nextInt();
-                humanMove = gameController.coordsToNUmber(x, y);
-            } while (!gameController.moveOk(humanMove));
-            return humanMove;
+                move = Helper.coordsToMove(x, y, gameController.getBoard().horizontalSize);
+            } while (!gameController.getBoard().moveOk(move));
         }
+        return move;
     }
     
     private boolean nextGame()
