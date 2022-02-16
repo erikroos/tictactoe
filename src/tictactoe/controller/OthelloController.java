@@ -25,12 +25,12 @@ public class OthelloController extends GameController {
         }
         board.setChars(computerChar, humanChar);
         // Black on center top right - bottom left
-        board.putMove(4, 3, this.side);
-        board.putMove(3, 4, this.side);
+        board.putMove(28, this.side);
+        board.putMove(35, this.side);
         // White on center top left - bottom right
         int opp = (this.side == COMPUTER) ? HUMAN : COMPUTER;
-        board.putMove(3, 3, opp);
-        board.putMove(4, 4, opp);
+        board.putMove(27, opp);
+        board.putMove(36, opp);
     }
 
     public int chooseMove() {

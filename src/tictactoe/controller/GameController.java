@@ -69,8 +69,7 @@ public abstract class GameController {
 
     public void playMove(int move) {
         // Put X or O, or B or W on chosen tile
-        int[] coords = Helper.moveToCoords(move, this.board.horizontalSize);
-        board.putMove(coords[0], coords[1], this.side);
+        board.putMove(move, this.side);
         // Switch side
         if (side == COMPUTER) {
             this.side = HUMAN;

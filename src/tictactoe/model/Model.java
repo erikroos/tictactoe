@@ -25,7 +25,10 @@ public abstract class Model {
         this.humanChar = humanChar;
     }
 
-    public void putMove(int x, int y, int side) {
+    public void putMove(int move, int side) {
+        int[] coords = Helper.moveToCoords(move, this.horizontalSize);
+        int x = coords[0];
+        int y = coords[1];
         board[x][y] = side;
     }
 
