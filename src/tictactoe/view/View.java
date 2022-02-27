@@ -97,19 +97,25 @@ class View
         if (gameController.computerPlays())
         {
             move = gameController.chooseMove();
-            System.out.println("Computer move = " + move);
-            if (!gameController.getBoard().moveOk(move)) {
-                System.out.println("Illegal move from computer! This is impossible... bailing out!");
-                System.exit(-1);
+            if (move == -1) {
+                System.out.println("Computer has to pass.");
+            } else {
+                int[] coords = Helper.moveToCoords(move, gameController.getBoard().horizontalSize);
+                System.out.println("Computer move. X = " + coords[0] + ", Y = " + coords[1]);
             }
         } else {
             do {
-                System.out.print("Your move please. X = ");
+                System.out.println("Your move please (-1, -1 to pass).");
+                System.out.print("X = ");
                 int x = reader.nextInt();
                 System.out.print("Y = ");
                 int y = reader.nextInt();
-                move = Helper.coordsToMove(x, y, gameController.getBoard().horizontalSize);
-            } while (!gameController.getBoard().moveOk(move));
+                if (x == -1 || y == -1) {
+                    move = -1;
+                } else {
+                    move = Helper.coordsToMove(x, y, gameController.getBoard().horizontalSize);
+                }
+            } while (!gameController.getBoard().moveOk(move, GameController.HUMAN));
         }
         return move;
     }

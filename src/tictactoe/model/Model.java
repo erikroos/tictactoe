@@ -37,6 +37,7 @@ public abstract class Model {
     }
 
     // Compute static value of current position (win, draw, etc.)
+    // TODO make abstract and implement for each game
     public int positionValue() {
         if (isAWin(GameController.HUMAN)) {
             return GameController.HUMAN_WIN;
@@ -76,7 +77,7 @@ public abstract class Model {
     public String toString()
     {
         int move;
-        List<Integer> possibleMoves = getAvailableMoves();
+        List<Integer> possibleMoves = getAvailableMoves(GameController.HUMAN);
         String returnString = "    ";
         for (int x = 0; x < this.horizontalSize; x++) {
             returnString += x + " ";
@@ -110,6 +111,6 @@ public abstract class Model {
 
     public abstract boolean isAWin(int side);
     public abstract int canWin(int side);
-    public abstract List<Integer> getAvailableMoves();
-    public abstract boolean moveOk(int move);
+    public abstract List<Integer> getAvailableMoves(int side);
+    public abstract boolean moveOk(int move, int side);
 }

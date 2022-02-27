@@ -54,7 +54,7 @@ public class TicTacToeController extends GameController
 
 		// Backtrack case: try all open moves and see which is best
 		// TODO add pruning
-		for (int move : board.getAvailableMoves()) {
+		for (int move : board.getAvailableMoves(side)) {
 			// Try this move for the current player
 			board.putMove(move, side);
 			// Now see what the opponent is going to do
@@ -107,7 +107,7 @@ public class TicTacToeController extends GameController
 		}
 
 		// Rule 3: Take a free square
-		ourMove = board.getAvailableMoves().get(0);
+		ourMove = board.getAvailableMoves(side).get(0);
 		return new BestMove(ourMove, TicTacToeController.UNCLEAR);
 	}
 }

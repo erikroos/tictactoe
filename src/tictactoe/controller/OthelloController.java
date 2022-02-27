@@ -34,9 +34,12 @@ public class OthelloController extends GameController {
     }
 
     public int chooseMove() {
-        List<Integer> moves = board.getAvailableMoves();
+        List<Integer> moves = board.getAvailableMoves(COMPUTER);
+        if (moves.size() == 0) {
+            return -1;
+        }
         Random random = new Random();
-        int randIndex = random.nextInt(moves.size()); // TODO smarter
+        int randIndex = random.nextInt(moves.size()); // TODO smarter (by using generic chooseMove in superclass)
         return moves.get(randIndex);
     }
 }

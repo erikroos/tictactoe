@@ -68,8 +68,10 @@ public abstract class GameController {
     }
 
     public void playMove(int move) {
-        // Put X or O, or B or W on chosen tile
-        board.putMove(move, this.side);
+        // Put X or O, or B or W on chosen tile, or pass
+        if (move != -1) {
+            board.putMove(move, this.side);
+        }
         // Switch side
         if (side == COMPUTER) {
             this.side = HUMAN;
