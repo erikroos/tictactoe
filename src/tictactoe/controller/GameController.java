@@ -54,9 +54,9 @@ public abstract class GameController {
     }
 
     public String winner() {
-        if      (this.position==COMPUTER_WIN) return "computer";
-        else if (this.position==HUMAN_WIN   ) return "human";
-        else                                  return "nobody";
+        if      (this.position==COMPUTER_WIN) return "I win!";
+        else if (this.position==HUMAN_WIN   ) return "You win!";
+        else                                  return "Nobody wins...";
     }
 
     public void printBoard() {

@@ -12,13 +12,47 @@ public class OthelloModel extends Model {
     }
 
     @Override
+    /**
+     * Side has won if there are no more moves and side has more stones than the opponent.
+     */
     public boolean isAWin(int side) {
-        return false;
+        if (getAvailableMoves(side).size() > 0) {
+            return false;
+        }
+        int opp = (side == GameController.COMPUTER) ? GameController.HUMAN : GameController.COMPUTER;
+        if (getAvailableMoves(opp).size() > 0) {
+            return false;
+        }
+        int nSide = 0;
+        int nOpp = 0;
+        for (int x = 0; x < this.horizontalSize; x++) {
+            for (int y = 0; y < this.verticalSize; y++) {
+                if (getContents(x, y) == side) {
+                    nSide++;
+                } else if (getContents(x, y) == opp) {
+                    nOpp++;
+                }
+            }
+        }
+        return (nSide > nOpp);
     }
 
     @Override
     public int canWin(int side) {
         return 0;
+    }
+
+    public void putMove(int move, int side) {
+        super.putMove(move, side);
+        // Flip
+        int opp = (side == GameController.COMPUTER) ? GameController.HUMAN : GameController.COMPUTER;
+        int[] coords = Helper.moveToCoords(move, this.horizontalSize);
+        List<int[]> borderSquares = getBorderSquares(coords, opp);
+        for (int[] oppCoords : borderSquares) {
+            if (causesFlip(oppCoords, coords, side)) {
+                doFlip(oppCoords, coords, side);
+            }
+        }
     }
 
     public boolean moveOk(int move, int side) {
@@ -37,7 +71,21 @@ public class OthelloModel extends Model {
         }
         // Check 3: square borders on stone of opponent
         int opp = (side == GameController.COMPUTER) ? GameController.HUMAN : GameController.COMPUTER;
-        List<int[]> borderSquares = new ArrayList<int[]>();
+        List<int[]> borderSquares = getBorderSquares(coords, opp);
+        if (borderSquares.size() == 0) {
+            return false;
+        }
+        // Check 4: causes flip
+        for (int[] oppCoords : borderSquares) {
+            if (causesFlip(oppCoords, coords, side)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<int[]> getBorderSquares(int[] coords, int opp) {
+        List<int[]> borderSquares = new ArrayList<>();
         for (int x = Math.max(0, coords[0] - 1); x <= Math.min(this.horizontalSize - 1, coords[0] + 1); x++) {
             for (int y = Math.max(0, coords[1] - 1); y <= Math.min(this.verticalSize - 1, coords[1] + 1); y++) {
                 if (x == coords[0] && y == coords[1]) { // skip square itself
@@ -51,37 +99,47 @@ public class OthelloModel extends Model {
                 }
             }
         }
-        if (borderSquares.size() == 0) {
-            return false;
-        }
-        // Check 4: causes flip
-        int dX, dY;
-        int xNext, yNext;
-        for (int[] oppCoords : borderSquares) {
-            dX = oppCoords[0] - coords[0];
-            dY = oppCoords[1] - coords[1];
-            xNext = oppCoords[0];
-            yNext = oppCoords[1];
-            while (true) {
-                xNext += dX;
-                yNext += dY;
-                // Out of bounds?
-                if (xNext < 0 || xNext >= this.horizontalSize || yNext < 0 || yNext >= this.verticalSize) {
-                    break;
-                }
-                // Empty?
-                if (getContents(xNext, yNext) == GameController.EMPTY) {
-                    break;
-                }
-                // Our own? Flippable!
-                if (getContents(xNext, yNext) == side) {
-                    return true;
-                }
-                // Opponent, so keep going
+        return borderSquares;
+    }
+
+    private boolean causesFlip(int[] oppCoords, int[] coords, int side) {
+        int dX = oppCoords[0] - coords[0];
+        int dY = oppCoords[1] - coords[1];
+        int xNext = oppCoords[0];
+        int yNext = oppCoords[1];
+        while (true) {
+            xNext += dX;
+            yNext += dY;
+            // Out of bounds?
+            if (xNext < 0 || xNext >= this.horizontalSize || yNext < 0 || yNext >= this.verticalSize) {
+                break;
             }
+            // Empty?
+            if (getContents(xNext, yNext) == GameController.EMPTY) {
+                break;
+            }
+            // Our own? Flippable!
+            if (getContents(xNext, yNext) == side) {
+                return true;
+            }
+            // Opponent, so keep going
         }
         // No flip apparently
         return false;
+    }
+
+    private void doFlip(int[] oppCoords, int[] coords, int side) {
+        int dX = oppCoords[0] - coords[0];
+        int dY = oppCoords[1] - coords[1];
+        int xNext = oppCoords[0];
+        int yNext = oppCoords[1];
+        int move;
+        while (getContents(xNext, yNext) != side) {
+            move = Helper.coordsToMove(xNext, yNext, this.horizontalSize);
+            super.putMove(move, side);
+            xNext += dX;
+            yNext += dY;
+        }
     }
 
     public List<Integer> getAvailableMoves(int side) {

@@ -87,7 +87,7 @@ class View
                 gameController.playMove(square);
                 gameController.printBoard();
             }
-            System.out.println("Game over: " + gameController.winner() + " wins");
+            System.out.println("Game over: " + gameController.winner());
         } while (nextGame());
     }
     

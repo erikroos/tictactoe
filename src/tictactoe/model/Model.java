@@ -37,7 +37,6 @@ public abstract class Model {
     }
 
     // Compute static value of current position (win, draw, etc.)
-    // TODO make abstract and implement for each game
     public int positionValue() {
         if (isAWin(GameController.HUMAN)) {
             return GameController.HUMAN_WIN;
