@@ -9,7 +9,7 @@ public class TicTacToeController extends GameController
 {
 	public TicTacToeController(TicTacToeModel board) {
 		super(board);
-		NAME = "Tic Tac Toe";
+		NAME = "tic-tac-toe";
 		MAX_DEPTH = 9;
 	}
 	

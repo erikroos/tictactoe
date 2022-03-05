@@ -37,7 +37,6 @@ public class ServerController {
 
     /**
      * The loop that controls automatic gameplay on the server.
-     * Currently supports one game of Tic-Tac-Toe.
      */
     public void serverLoop() {
         if (connection == null) {
@@ -110,7 +109,7 @@ public class ServerController {
                 // Game on for the next round!
                 inGame = false;
                 gameEnded = false;
-                subscribe(); // It is really necessary to re-subscribe after every game
+                subscribe(); // It is really necessary to re-subscribe after every game (TODO unless you're in a tournament)
             }
         }
     }
@@ -139,8 +138,8 @@ public class ServerController {
     }
 
     private void subscribe() {
-        out.println("subscribe tic-tac-toe"); // does not always give back OK
-        System.out.println("Subscribed to tic-tac-toe");
+        out.println("subscribe " + gameController.NAME); // does not always give back OK
+        System.out.println("Subscribed to " + gameController.NAME);
     }
 
     private void getGameList() throws IOException {
@@ -197,7 +196,7 @@ public class ServerController {
         } else if (responseParts.length > 3 && responseParts[2].equals("CHALLENGE")) {
             // We've been challenged!
             if (getParameterValueFromServerInfo(info, "GAMETYPE") != null &&
-                    getParameterValueFromServerInfo(info, "GAMETYPE").equals("tic-tac-toe")
+                    getParameterValueFromServerInfo(info, "GAMETYPE").equals(GameController.NAME)
             ) {
                 System.out.println("Challenged! " + info);
                 String challengeNr = getParameterValueFromServerInfo(info, "CHALLENGENUMBER");

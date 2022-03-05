@@ -5,7 +5,7 @@ import tictactoe.model.OthelloModel;
 public class OthelloController extends GameController {
     public OthelloController(OthelloModel board) {
         super(board);
-        NAME = "Othello";
+        NAME = "othello";
         MAX_DEPTH = 6;
     }
 
