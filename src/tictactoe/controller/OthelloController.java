@@ -1,16 +1,12 @@
 package tictactoe.controller;
 
-import tictactoe.model.Model;
 import tictactoe.model.OthelloModel;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class OthelloController extends GameController {
     public OthelloController(OthelloModel board) {
         super(board);
         NAME = "Othello";
+        MAX_DEPTH = 6;
     }
 
     public void initSide() {
@@ -31,15 +27,5 @@ public class OthelloController extends GameController {
         int opp = (this.side == COMPUTER) ? HUMAN : COMPUTER;
         board.putMove(27, opp);
         board.putMove(36, opp);
-    }
-
-    public int chooseMove() {
-        List<Integer> moves = board.getAvailableMoves(COMPUTER);
-        if (moves.size() == 0) {
-            return -1;
-        }
-        Random random = new Random();
-        int randIndex = random.nextInt(moves.size()); // TODO smarter (by using generic chooseMove in superclass)
-        return moves.get(randIndex);
     }
 }

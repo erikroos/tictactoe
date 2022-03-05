@@ -11,6 +11,10 @@ public class OthelloModel extends Model {
         super(horizontalSize, verticalSize);
     }
 
+    public OthelloModel(Model that) {
+        super(that);
+    }
+
     @Override
     /**
      * Side has won if there are no more moves and side has more stones than the opponent.
@@ -38,10 +42,6 @@ public class OthelloModel extends Model {
     }
 
     @Override
-    public int canWin(int side) {
-        return 0;
-    }
-
     public void putMove(int move, int side) {
         super.putMove(move, side);
         // Flip

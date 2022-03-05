@@ -7,8 +7,8 @@ public class BestMove {
     int square;
     int val;
 
-    public BestMove(int v) {
-        this(0, v);
+    public BestMove(int value) {
+        this(0, value);
     }
 
     public BestMove(int move, int value) {

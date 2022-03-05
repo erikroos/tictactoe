@@ -2,7 +2,10 @@ package tictactoe.controller;
 
 import tictactoe.Helper;
 import tictactoe.model.Model;
+import tictactoe.model.OthelloModel;
+import tictactoe.model.TicTacToeModel;
 
+import java.util.List;
 import java.util.Random;
 
 public abstract class GameController {
@@ -13,6 +16,8 @@ public abstract class GameController {
     public static final int DRAW         = 1;
     public static final int UNCLEAR      = 2;
     public static final int COMPUTER_WIN = 3;
+
+    public static int MAX_DEPTH;
 
     // Bridge pattern: abstract Controller has an abstract Model
     protected Model board;
@@ -68,7 +73,7 @@ public abstract class GameController {
     }
 
     public void playMove(int move) {
-        // Put X or O, or B or W on chosen tile, or pass
+        // Put X or O, or B or W, on chosen tile, or pass
         if (move != -1) {
             board.putMove(move, this.side);
         }
@@ -80,6 +85,77 @@ public abstract class GameController {
         }
     }
 
+    public int chooseMove() {
+        BestMove best = chooseMove(COMPUTER, MAX_DEPTH, getBoardCopy(this.board));
+        return best.square;
+    }
+
+    /**
+     * Find optimal move using the Minimax algorithm.
+     *
+     * @param side
+     * @return BestMove
+     */
+    protected BestMove chooseMove(int side, int depth, Model boardCopy) {
+        int opp = (side == COMPUTER) ? HUMAN : COMPUTER; // The other side (in the first call of this method this is always HUMAN)
+        BestMove reply; // Opponent's best reply
+        int simpleEval; // Result of an immediate evaluation
+        // For storing the best result so far:
+        int maxMove = 0;
+        int value = (side == COMPUTER) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
+        // Base case 1: board is full, we can see directly what the score is
+        simpleEval = boardCopy.positionValue();
+        if (simpleEval != UNCLEAR) {
+            return new BestMove(simpleEval);
+        }
+        // Base case 2: max depth reached
+        if (depth == 0) {
+            List<Integer> moves = boardCopy.getAvailableMoves(side);
+            if (moves.size() == 0) {
+                return new BestMove( -1, UNCLEAR);
+            }
+            // TODO do not use random but choose move with highest heuristic value
+            Random random = new Random();
+            int randIndex = random.nextInt(moves.size());
+            return new BestMove(moves.get(randIndex), UNCLEAR);
+        }
+
+        // Backtrack case: try all open moves and see which is best
+        // TODO add pruning
+        for (int move : boardCopy.getAvailableMoves(side)) {
+            Model freshBoardCopy = getBoardCopy(boardCopy);
+            // Try this move for the current player
+            freshBoardCopy.putMove(move, side);
+            // Now see what the opponent is going to do
+            reply = chooseMove(opp, depth - 1, freshBoardCopy); // Recursion
+            if (side == HUMAN) {
+                // Human, minimizing
+                if (reply.val < value) {
+                    value = reply.val;
+                    maxMove = move;
+                }
+            } else {
+                // Computer, maximizing
+                if (reply.val > value) {
+                    value = reply.val;
+                    maxMove = move;
+                }
+            }
+            // No need to undo move because we used a copy of the board
+        }
+        return new BestMove(maxMove, value);
+    }
+
+    private Model getBoardCopy(Model boardCopy) {
+        Model newBoardCopy;
+        if (boardCopy.getClass().equals(TicTacToeModel.class)) {
+            newBoardCopy = new TicTacToeModel(boardCopy); // Deep copy using Copy constructor
+        } else {
+            newBoardCopy = new OthelloModel(boardCopy); // Deep copy using Copy constructor
+        }
+        return newBoardCopy;
+    }
+
     public abstract void initSide();
-    public abstract int chooseMove();
 }
