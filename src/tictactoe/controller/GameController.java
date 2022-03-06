@@ -86,7 +86,12 @@ public abstract class GameController {
     }
 
     public int chooseMove() {
-        BestMove best = chooseMove(COMPUTER, MAX_DEPTH, getBoardCopy(this.board));
+        BestMove best = chooseMove(
+                COMPUTER,
+                MAX_DEPTH,
+                getBoardCopy(this.board),
+                Integer.MIN_VALUE,
+                Integer.MAX_VALUE);
         return best.square;
     }
 
@@ -96,7 +101,7 @@ public abstract class GameController {
      * @param side
      * @return BestMove
      */
-    protected BestMove chooseMove(int side, int depth, Model boardCopy) {
+    protected BestMove chooseMove(int side, int depth, Model boardCopy, int alpha, int beta) {
         int opp = (side == COMPUTER) ? HUMAN : COMPUTER; // The other side (in the first call of this method this is always HUMAN)
         BestMove reply; // Opponent's best reply
         int simpleEval; // Result of an immediate evaluation
@@ -115,25 +120,38 @@ public abstract class GameController {
             if (moves.size() == 0) {
                 return new BestMove( -1, UNCLEAR);
             }
-            // TODO do not use random but choose move with highest heuristic value
-            Random random = new Random();
-            int randIndex = random.nextInt(moves.size());
-            return new BestMove(moves.get(randIndex), UNCLEAR);
+            int maxHeurEval = (side == COMPUTER) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            int maxHeurMove = -1;
+            int heurEval;
+            for (int move : moves) {
+                heurEval = boardCopy.positionValue(true);
+                if (side == COMPUTER && heurEval > maxHeurEval) {
+                    maxHeurEval = heurEval;
+                    maxHeurMove = move;
+                }
+                if (side == HUMAN && heurEval < maxHeurEval) {
+                    maxHeurEval = heurEval;
+                    maxHeurMove = move;
+                }
+            }
+            return new BestMove(maxHeurMove, maxHeurEval);
         }
 
         // Backtrack case: try all open moves and see which is best
-        // TODO add pruning
         for (int move : boardCopy.getAvailableMoves(side)) {
             Model freshBoardCopy = getBoardCopy(boardCopy);
             // Try this move for the current player
             freshBoardCopy.putMove(move, side);
             // Now see what the opponent is going to do
-            reply = chooseMove(opp, depth - 1, freshBoardCopy); // Recursion
+            reply = chooseMove(opp, depth - 1, freshBoardCopy, alpha, beta); // Recursion
             if (side == HUMAN) {
                 // Human, minimizing
                 if (reply.val < value) {
                     value = reply.val;
                     maxMove = move;
+                }
+                if (value < beta) {
+                    beta = value;
                 }
             } else {
                 // Computer, maximizing
@@ -141,6 +159,13 @@ public abstract class GameController {
                     value = reply.val;
                     maxMove = move;
                 }
+                if (value > alpha) {
+                    alpha = value;
+                }
+            }
+            // Cut this whole branch if we know it will never be chosen
+            if (alpha >= beta) {
+                break;
             }
             // No need to undo move because we used a copy of the board
         }

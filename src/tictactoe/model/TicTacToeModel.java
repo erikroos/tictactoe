@@ -15,6 +15,11 @@ public class TicTacToeModel extends Model {
         super(that);
     }
 
+    @Override
+    public int positionValue(boolean boardComplete) {
+        return super.positionValue();
+    }
+
     // Returns whether 'side' has won in this position
     // TODO make completely size-independent
     public boolean isAWin(int side)

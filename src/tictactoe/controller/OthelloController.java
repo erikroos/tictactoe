@@ -6,7 +6,7 @@ public class OthelloController extends GameController {
     public OthelloController(OthelloModel board) {
         super(board);
         NAME = "othello";
-        MAX_DEPTH = 6;
+        MAX_DEPTH = 10;
     }
 
     public void initSide() {

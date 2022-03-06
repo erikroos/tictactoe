@@ -70,6 +70,8 @@ public abstract class Model {
         return GameController.UNCLEAR;
     }
 
+    public abstract int positionValue(boolean boardComplete);
+
     public void clear() {
         for (int i = 0; i < this.horizontalSize; i++) {
             for (int j = 0; j < this.verticalSize; j++) {

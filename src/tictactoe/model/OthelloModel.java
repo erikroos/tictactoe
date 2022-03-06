@@ -17,6 +17,36 @@ public class OthelloModel extends Model {
 
     @Override
     /**
+     * Computes static value of board.
+     * Value between 0 (human win) and 3 (computer win)
+     */
+    public int positionValue(boolean boardComplete) {
+        if (boardComplete) {
+            return super.positionValue();
+        }
+        // Who has more stones? (TODO make separate method - see isAWin())
+        int nHuman = 0;
+        int nComputer = 0;
+        for (int x = 0; x < this.horizontalSize; x++) {
+            for (int y = 0; y < this.verticalSize; y++) {
+                if (getContents(x, y) == humanChar) {
+                    nHuman++;
+                } else if (getContents(x, y) == computerChar) {
+                    nComputer++;
+                }
+            }
+        }
+        if (nHuman > nComputer) {
+            return 1;
+        } else {
+            return 2;
+        }
+        // TODO add more heuristics like mobility, zone values etc.
+        // We might have to extend the range of numbers we can give back
+    }
+
+    @Override
+    /**
      * Side has won if there are no more moves and side has more stones than the opponent.
      */
     public boolean isAWin(int side) {
