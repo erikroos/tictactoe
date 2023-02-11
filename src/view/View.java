@@ -64,7 +64,7 @@ class View
                 ServerController sc = new ServerController(gameController, "ITV2Dtutor"); // TODO get username from config
                 sc.serverLoop();
             } catch (IOException e) {
-                System.out.println("Server setup failed - terminating...");
+                System.out.println("Server setup failed (" + e.getMessage() + ") - terminating...");
             }
             return;
         }
@@ -87,21 +87,24 @@ class View
                 gameController.playMove(square);
                 gameController.printBoard();
             }
-            System.out.println("Game over: " + gameController.winner() + " wins");
+            System.out.println("Game over: " + gameController.winner());
         } while (nextGame());
     }
     
     private int move()
     {
         int move;
+        long startTime, duration;
         if (gameController.computerPlays())
         {
+            startTime = System.currentTimeMillis();
             move = gameController.chooseMove();
+            duration = System.currentTimeMillis() - startTime;
             if (move == -1) {
-                System.out.println("Computer has to pass.");
+                System.out.println("(" + duration + " ms) Computer has to pass.");
             } else {
                 int[] coords = Helper.moveToCoords(move, gameController.getBoard().horizontalSize);
-                System.out.println("Computer move. X = " + coords[0] + ", Y = " + coords[1]);
+                System.out.println("(" + duration + " ms) Computer move. X = " + coords[0] + ", Y = " + coords[1]);
             }
         } else {
             do {

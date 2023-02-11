@@ -14,10 +14,30 @@ public abstract class Model {
     protected int[][] board;
     protected char computerChar, humanChar;
 
+    /**
+     * Standard constructor
+     * @param horizontalSize
+     * @param verticalSize
+     */
     public Model(int horizontalSize, int verticalSize) {
         this.horizontalSize = horizontalSize;
         this.verticalSize = verticalSize;
         board = new int[this.horizontalSize][this.verticalSize];
+    }
+
+    /**
+     * Copy constructor
+     * @param that
+     */
+    public Model(Model that) {
+        this(that.horizontalSize, that.verticalSize);
+        this.humanChar = that.humanChar;
+        this.computerChar = that.computerChar;
+        for (int i = 0; i < this.horizontalSize; i++) {
+            for (int j = 0; j < this.verticalSize; j++) {
+                this.board[i][j] = that.board[i][j];
+            }
+        }
     }
 
     public void setChars(char computerChar, char humanChar) {
@@ -30,7 +50,6 @@ public abstract class Model {
     }
 
     // Compute static value of current position (win, draw, etc.)
-    // TODO make abstract and implement for each game
     public int positionValue() {
         if (isAWin(GameController.HUMAN)) {
             return GameController.HUMAN_WIN;
@@ -43,6 +62,8 @@ public abstract class Model {
         }
         return GameController.UNCLEAR;
     }
+
+    public abstract int positionValue(boolean boardComplete);
 
     public void clear() {
         for (int i = 0; i < this.horizontalSize; i++) {
@@ -110,7 +131,6 @@ public abstract class Model {
     }
 
     public abstract boolean isAWin(int side);
-    public abstract int canWin(int side);
     public abstract List<Integer> getAvailableMoves(int side);
     public abstract boolean moveOk(int move, int side);
 }
