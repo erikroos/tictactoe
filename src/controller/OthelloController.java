@@ -1,16 +1,16 @@
-package tictactoe.controller;
+package controller;
 
-import tictactoe.model.Model;
-import tictactoe.model.OthelloModel;
+import model.Model;
+import model.OthelloModel;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class OthelloController extends GameController {
-    public OthelloController(OthelloModel board) {
+    public OthelloController(Model board) {
         super(board);
         NAME = "Othello";
+        GAMENAME = "reversi";
     }
 
     public void initSide() {

@@ -1,7 +1,6 @@
-package tictactoe.controller;
+package controller;
 
-import tictactoe.Helper;
-import tictactoe.model.Model;
+import model.Model;
 
 import java.util.Random;
 
@@ -18,6 +17,7 @@ public abstract class GameController {
     protected Model board;
 
     public static String NAME;
+    public static String GAMENAME;
     protected int side;
     protected int position = UNCLEAR;
     protected char computerChar, humanChar;

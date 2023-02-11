@@ -1,6 +1,6 @@
-package tictactoe.controller;
+package controller;
 
-import tictactoe.controller.GameController;
+import controller.GameController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +37,6 @@ public class ServerController {
 
     /**
      * The loop that controls automatic gameplay on the server.
-     * Currently supports one game of Tic-Tac-Toe.
      */
     public void serverLoop() {
         if (connection == null) {
@@ -139,8 +138,8 @@ public class ServerController {
     }
 
     private void subscribe() {
-        out.println("subscribe tic-tac-toe"); // does not always give back OK
-        System.out.println("Subscribed to tic-tac-toe");
+        out.println("subscribe " + this.gameController.GAMENAME); // does not (always) give back OK
+        System.out.println("Subscribed to " + this.gameController.GAMENAME);
     }
 
     private void getGameList() throws IOException {

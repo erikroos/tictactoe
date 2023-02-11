@@ -1,4 +1,4 @@
-package tictactoe;
+package helper;
 
 public class Helper {
     public static int coordsToMove(int x, int y, int rowLength) {

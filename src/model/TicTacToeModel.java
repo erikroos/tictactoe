@@ -1,7 +1,7 @@
-package tictactoe.model;
+package model;
 
-import tictactoe.Helper;
-import tictactoe.controller.GameController;
+import helper.Helper;
+import controller.GameController;
 
 import java.util.ArrayList;
 import java.util.List;

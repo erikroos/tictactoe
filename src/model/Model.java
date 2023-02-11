@@ -1,7 +1,7 @@
-package tictactoe.model;
+package model;
 
-import tictactoe.Helper;
-import tictactoe.controller.GameController;
+import helper.Helper;
+import controller.GameController;
 
 import java.util.List;
 
@@ -23,13 +23,6 @@ public abstract class Model {
     public void setChars(char computerChar, char humanChar) {
         this.computerChar = computerChar;
         this.humanChar = humanChar;
-    }
-
-    public void putMove(int move, int side) {
-        int[] coords = Helper.moveToCoords(move, this.horizontalSize);
-        int x = coords[0];
-        int y = coords[1];
-        board[x][y] = side;
     }
 
     public int getContents(int x, int y) {
@@ -107,6 +100,13 @@ public abstract class Model {
             returnString += "\n";
         }
         return returnString;
+    }
+
+    public void putMove(int move, int side) {
+        int[] coords = Helper.moveToCoords(move, this.horizontalSize);
+        int x = coords[0];
+        int y = coords[1];
+        board[x][y] = side;
     }
 
     public abstract boolean isAWin(int side);

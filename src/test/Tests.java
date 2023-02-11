@@ -1,9 +1,9 @@
-package tictactoe;
+package test;
 
 import org.junit.jupiter.api.Test;
-import tictactoe.controller.GameController;
-import tictactoe.controller.TicTacToeController;
-import tictactoe.model.TicTacToeModel;
+import controller.GameController;
+import controller.TicTacToeController;
+import model.TicTacToeModel;
 
 import static org.junit.jupiter.api.Assertions.*;
 

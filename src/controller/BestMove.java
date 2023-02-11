@@ -1,4 +1,4 @@
-package tictactoe.controller;
+package controller;
 
 /**
  * Simple container class to store optimal move that the AI can make.

@@ -1,10 +1,10 @@
-package tictactoe.view;
+package view;
 
-import tictactoe.Helper;
-import tictactoe.controller.*;
-import tictactoe.model.Model;
-import tictactoe.model.OthelloModel;
-import tictactoe.model.TicTacToeModel;
+import helper.Helper;
+import controller.*;
+import model.Model;
+import model.OthelloModel;
+import model.TicTacToeModel;
 
 import java.io.IOException;
 import java.util.*;

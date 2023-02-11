@@ -1,7 +1,7 @@
-package tictactoe.controller;
+package controller;
 
-import tictactoe.model.OthelloModel;
-import tictactoe.model.TicTacToeModel;
+import model.OthelloModel;
+import model.TicTacToeModel;
 
 public class ControllerFactory {
     public static GameController getController(String game) throws ClassNotFoundException {

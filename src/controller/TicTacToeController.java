@@ -1,9 +1,6 @@
-package tictactoe.controller;
+package controller;
 
-import tictactoe.Helper;
-import tictactoe.model.TicTacToeModel;
-
-import java.util.*;
+import model.TicTacToeModel;
 
 /**
  * Code (c) Hanzehogeschool Groningen
@@ -13,6 +10,7 @@ public class TicTacToeController extends GameController
 	public TicTacToeController(TicTacToeModel board) {
 		super(board);
 		NAME = "Tic Tac Toe";
+		GAMENAME = "tictactoe";
 	}
 	
 	public void initSide() {
