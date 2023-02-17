@@ -9,7 +9,8 @@ import model.MostSquaresHeuristic;
 public class TicTacToeController extends GameController
 {
 	public TicTacToeController(TicTacToeModel board) {
-		super(board, 9, new MostSquaresHeuristic());
+		super(board, new MostSquaresHeuristic());
+		MAX_DEPTH = 9;
 		NAME = "Tic Tac Toe";
 		GAMENAME = "tictactoe";
 	}

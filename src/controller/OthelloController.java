@@ -9,7 +9,8 @@ import java.util.Random;
 
 public class OthelloController extends GameController {
     public OthelloController(Model board) {
-        super(board, 6, new MostSquaresHeuristic());
+        super(board, new MostSquaresHeuristic());
+        MAX_DEPTH = 6;
         NAME = "Othello";
         GAMENAME = "reversi";
     }

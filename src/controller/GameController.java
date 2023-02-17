@@ -24,11 +24,10 @@ public abstract class GameController {
     protected int side;
     protected int position = UNCLEAR;
     protected char computerChar, humanChar;
-    private final int MAX_DEPTH;
+    protected int MAX_DEPTH;
 
-    public GameController(Model board, int max_depth, Heuristic heuristic) {
+    public GameController(Model board, Heuristic heuristic) {
         this.board = board;
-        this.MAX_DEPTH = max_depth;
         this.heuristic = heuristic;
     }
 
