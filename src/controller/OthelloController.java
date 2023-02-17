@@ -2,13 +2,14 @@ package controller;
 
 import model.Model;
 import model.OthelloModel;
+import model.MostSquaresHeuristic;
 
 import java.util.List;
 import java.util.Random;
 
 public class OthelloController extends GameController {
     public OthelloController(Model board) {
-        super(board);
+        super(board, 6, new MostSquaresHeuristic());
         NAME = "Othello";
         GAMENAME = "reversi";
     }
@@ -31,15 +32,5 @@ public class OthelloController extends GameController {
         int opp = (this.side == COMPUTER) ? HUMAN : COMPUTER;
         board.putMove(27, opp);
         board.putMove(36, opp);
-    }
-
-    public int chooseMove() {
-        List<Integer> moves = board.getAvailableMoves(COMPUTER);
-        if (moves.size() == 0) {
-            return -1;
-        }
-        Random random = new Random();
-        int randIndex = random.nextInt(moves.size()); // TODO smarter (by using generic chooseMove in superclass)
-        return moves.get(randIndex);
     }
 }

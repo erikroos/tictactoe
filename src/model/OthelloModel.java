@@ -12,15 +12,29 @@ public class OthelloModel extends Model {
     }
 
     @Override
+    public Model makeCopy() {
+        Model modelToCopy = new OthelloModel(this.horizontalSize, this.verticalSize);
+        modelToCopy.board = new int[this.horizontalSize][this.verticalSize];
+        for (int x = 0; x < this.horizontalSize; x++) {
+            for (int y = 0; y < this.verticalSize; y++) {
+                modelToCopy.board[x][y] = this.board[x][y];
+            }
+        }
+        modelToCopy.computerChar = this.computerChar;
+        modelToCopy.humanChar = this.humanChar;
+        return modelToCopy;
+    }
+
+    @Override
     public boolean isAWin(int side) {
+        int opp = (side == GameController.COMPUTER) ? GameController.HUMAN : GameController.COMPUTER;
+        if (isFull() || (getAvailableMoves(side).size() == 0 && getAvailableMoves(opp).size() == 0)) {
+            return countSquares(side) > countSquares(opp);
+        }
         return false;
     }
 
     @Override
-    public int canWin(int side) {
-        return 0;
-    }
-
     public boolean moveOk(int move, int side) {
         if (move == -1) {
             return true; // Pass is always OK
@@ -50,6 +64,7 @@ public class OthelloModel extends Model {
         return false;
     }
 
+    @Override
     public List<Integer> getAvailableMoves(int side) {
         int move;
         List<Integer> moves = new ArrayList<>();
@@ -110,6 +125,7 @@ public class OthelloModel extends Model {
     }
 
     private void flip(int[] coords, int[] oppCoords, int side) {
+        int opp = (side == GameController.COMPUTER) ? GameController.HUMAN : GameController.COMPUTER;
         int dX = oppCoords[0] - coords[0];
         int dY = oppCoords[1] - coords[1];
         int xNext = oppCoords[0];
@@ -121,11 +137,15 @@ public class OthelloModel extends Model {
                 return;
             }
             // Opponent, so flip
-            int move = Helper.coordsToMove(xNext, yNext, this.horizontalSize);
-            super.putMove(move, side);
-            // Next
-            xNext += dX;
-            yNext += dY;
+            if (getContents(xNext, yNext) == opp) {
+                int move = Helper.coordsToMove(xNext, yNext, this.horizontalSize);
+                super.putMove(move, side);
+                // Next
+                xNext += dX;
+                yNext += dY;
+            } else {
+                System.out.println("This should not happen!");
+            }
         }
     }
 
@@ -139,5 +159,21 @@ public class OthelloModel extends Model {
                 flip(coords, oppCoords, side);
             }
         }
+    }
+
+    // Compute static value of current position (win, draw, etc.)
+    @Override
+    public int positionValue() {
+        if (isAWin(GameController.HUMAN)) {
+            return GameController.HUMAN_WIN;
+        }
+        if (isAWin(GameController.COMPUTER)) {
+            return GameController.COMPUTER_WIN;
+        }
+        if (isFull() || (getAvailableMoves(GameController.HUMAN).size() == 0 && getAvailableMoves(GameController.COMPUTER).size() == 0)) {
+            return GameController.DRAW;
+        }
+        // TODO return a value based on a useful heuristic
+        return GameController.UNCLEAR;
     }
 }

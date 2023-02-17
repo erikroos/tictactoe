@@ -17,8 +17,10 @@ public abstract class Model {
     public Model(int horizontalSize, int verticalSize) {
         this.horizontalSize = horizontalSize;
         this.verticalSize = verticalSize;
-        board = new int[this.horizontalSize][this.verticalSize];
+        this.board = new int[this.horizontalSize][this.verticalSize];
     }
+
+    public abstract Model makeCopy();
 
     public void setChars(char computerChar, char humanChar) {
         this.computerChar = computerChar;
@@ -29,21 +31,6 @@ public abstract class Model {
         return board[x][y];
     }
 
-    // Compute static value of current position (win, draw, etc.)
-    // TODO make abstract and implement for each game
-    public int positionValue() {
-        if (isAWin(GameController.HUMAN)) {
-            return GameController.HUMAN_WIN;
-        }
-        if (isAWin(GameController.COMPUTER)) {
-            return GameController.COMPUTER_WIN;
-        }
-        if (isFull()) {
-            return GameController.DRAW;
-        }
-        return GameController.UNCLEAR;
-    }
-
     public void clear() {
         for (int i = 0; i < this.horizontalSize; i++) {
             for (int j = 0; j < this.verticalSize; j++) {
@@ -52,7 +39,7 @@ public abstract class Model {
         }
     }
 
-    private boolean isFull() {
+    protected boolean isFull() {
         for (int i = 0; i < this.horizontalSize; i++) {
             for (int j = 0; j < this.verticalSize; j++) {
                 if (board[i][j] == GameController.EMPTY) {
@@ -109,8 +96,20 @@ public abstract class Model {
         board[x][y] = side;
     }
 
+    public int countSquares(int side) {
+        int counter = 0;
+        for (int x = 0; x < this.horizontalSize; x++) {
+            for (int y = 0; y < this.verticalSize; y++) {
+                if (this.board[x][y] == side) {
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
+
     public abstract boolean isAWin(int side);
-    public abstract int canWin(int side);
     public abstract List<Integer> getAvailableMoves(int side);
     public abstract boolean moveOk(int move, int side);
+    public abstract int positionValue();
 }

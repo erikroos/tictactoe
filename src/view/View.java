@@ -87,7 +87,7 @@ class View
                 gameController.playMove(square);
                 gameController.printBoard();
             }
-            System.out.println("Game over: " + gameController.winner());
+            System.out.println("Game over: " + gameController.winner() + " wins");
         } while (nextGame());
     }
     
@@ -110,9 +110,19 @@ class View
             do {
                 System.out.println("Your move please (-1, -1 to pass).");
                 System.out.print("X = ");
-                int x = reader.nextInt();
+                int x = -1;
+                try {
+                    x = reader.nextInt();
+                } catch (InputMismatchException ime) {
+                    System.out.println("Illegal input. I assume you want to pass.");
+                }
                 System.out.print("Y = ");
-                int y = reader.nextInt();
+                int y = -1;
+                try {
+                    y = reader.nextInt();
+                } catch (InputMismatchException ime) {
+                    System.out.println("Illegal input. I assume you want to pass.");
+                }
                 if (x == -1 || y == -1) {
                     move = -1;
                 } else {

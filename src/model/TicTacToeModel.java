@@ -11,23 +11,38 @@ public class TicTacToeModel extends Model {
         super(horizontalSize, verticalSize);
     }
 
+    @Override
+    public Model makeCopy() {
+        Model modelToCopy = new TicTacToeModel(this.horizontalSize, this.verticalSize);
+        modelToCopy.board = new int[this.horizontalSize][this.verticalSize];
+        for (int x = 0; x < this.horizontalSize; x++) {
+            for (int y = 0; y < this.verticalSize; y++) {
+                modelToCopy.board[x][y] = this.board[x][y];
+            }
+        }
+        modelToCopy.computerChar = this.computerChar;
+        modelToCopy.humanChar = this.humanChar;
+        return modelToCopy;
+    }
+
     // Returns whether 'side' has won in this position
     // TODO make completely size-independent
+    @Override
     public boolean isAWin(int side)
     {
-        // Check the three horizontals
+        // Check the horizontals
         for (int i = 0; i < this.horizontalSize; i++) {
             if (board[i][0] == side && board[i][1] == side && board[i][2] == side) {
                 return true;
             }
         }
-        // Check the three verticals
+        // Check the verticals
         for (int i = 0; i < this.verticalSize; i++) {
             if (board[0][i] == side && board[1][i] == side && board[2][i] == side) {
                 return true;
             }
         }
-        // Check the two diagonals
+        // Check the diagonals
         if (board[0][0] == side && board[1][1] == side && board[2][2] == side) {
             return true;
         }
@@ -35,62 +50,6 @@ public class TicTacToeModel extends Model {
             return true;
         }
         return false;
-    }
-
-    // Returns move that 'side' can make to win in this position
-    // TODO make completely size-independent
-    public int canWin(int side)
-    {
-        // Check the three horizontals
-        for (int i = 0; i < this.horizontalSize; i++) {
-            if (board[i][0] == side && board[i][1] == side && board[i][2] == GameController.EMPTY) {
-                return i * 3 + 2; // 2, 5 or 8
-            }
-            if (board[i][0] == side && board[i][1] == GameController.EMPTY && board[i][2] == side) {
-                return i * 3 + 1;
-            }
-            if (board[i][0] == GameController.EMPTY && board[i][1] == side && board[i][2] == side) {
-                return i * 3;
-            }
-        }
-
-        // Check the three verticals
-        for (int i = 0; i < this.verticalSize; i++) {
-            if (board[0][i] == side && board[1][i] == side && board[2][i] == GameController.EMPTY) {
-                return 6 + i; // 6, 7 or 8
-            }
-            if (board[0][i] == side && board[1][i] == GameController.EMPTY && board[2][i] == side) {
-                return 3 + i; // 3, 4 or 5
-            }
-            if (board[0][i] == GameController.EMPTY && board[1][i] == side && board[2][i] == side) {
-                return i; // 0, 1 or 2
-            }
-        }
-
-        // Check the two diagonals
-        // Top left to bottom right
-        if (board[0][0] == side && board[1][1] == side && board[2][2] == GameController.EMPTY) {
-            return 8;
-        }
-        if (board[0][0] == side && board[1][1] == GameController.EMPTY && board[2][2] == side) {
-            return 4;
-        }
-        if (board[0][0] == GameController.EMPTY && board[1][1] == side && board[2][2] == side) {
-            return 0;
-        }
-        // Bottom left to top right
-        if (board[0][2] == side && board[1][1] == side && board[2][0] == GameController.EMPTY) {
-            return 6;
-        }
-        if (board[0][2] == side && board[1][1] == GameController.EMPTY && board[2][0] == side) {
-            return 4;
-        }
-        if (board[0][2] == GameController.EMPTY && board[1][1] == side && board[2][0] == side) {
-            return 2;
-        }
-
-        // No way to make N-in-a-row...
-        return -1;
     }
 
     public List<Integer> getAvailableMoves(int side) {
@@ -118,5 +77,20 @@ public class TicTacToeModel extends Model {
             return false;
         }
         return true;
+    }
+
+    // Compute static value of current position (win, draw, etc.)
+    @Override
+    public int positionValue() {
+        if (isAWin(GameController.HUMAN)) {
+            return GameController.HUMAN_WIN;
+        }
+        if (isAWin(GameController.COMPUTER)) {
+            return GameController.COMPUTER_WIN;
+        }
+        if (isFull()) {
+            return GameController.DRAW;
+        }
+        return GameController.UNCLEAR;
     }
 }

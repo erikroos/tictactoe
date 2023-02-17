@@ -8,7 +8,7 @@ public class BestMove {
     int val;
 
     public BestMove(int value) {
-        this(0, value);
+        this(-1, value);
     }
 
     public BestMove(int move, int value) {
