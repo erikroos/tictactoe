@@ -1,15 +1,15 @@
 package controller;
 
-import model.TicTacToeModel;
-import model.MostSquaresHeuristic;
+import model.Model;
+import model.Heuristic;
 
 /**
  * Code (c) Hanzehogeschool Groningen
  */
 public class TicTacToeController extends GameController
 {
-	public TicTacToeController(TicTacToeModel board) {
-		super(board, new MostSquaresHeuristic());
+	public TicTacToeController(Model board, Heuristic heuristic) {
+		super(board, heuristic);
 		MAX_DEPTH = 9;
 		NAME = "Tic Tac Toe";
 		GAMENAME = "tictactoe";

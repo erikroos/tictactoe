@@ -105,7 +105,7 @@ public abstract class GameController {
         if (simpleEvaluationValue != UNCLEAR) {
             return new BestMove(simpleEvaluationValue);
         }
-        // Base case 2: maximum depth reached
+        // Base case 2: maximum depth reached, use injected heuristic
         if (depth > MAX_DEPTH) {
             int value;
             int maxMove = -1;
@@ -124,6 +124,20 @@ public abstract class GameController {
                         maxValue = value;
                         maxMove = move;
                     }
+                }
+            }
+            // Fist map heuristic outcome (negative or positive number) to Human or Computer advantage
+            if (side == HUMAN) { // Human, minimizing
+                if (maxValue < 0) {
+                    maxValue = HUMAN_ADV;
+                } else {
+                    maxValue = COMPUTER_ADV;
+                }
+            } else { // Computer, maximizing
+                if (maxValue > 0) {
+                    maxValue = COMPUTER_ADV;
+                } else {
+                    maxValue = HUMAN_ADV;
                 }
             }
             return new BestMove(maxMove, maxValue);

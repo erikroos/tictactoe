@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import controller.GameController;
 import controller.TicTacToeController;
 import model.TicTacToeModel;
+import model.MostSquaresHeuristic;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +12,7 @@ public class Tests {
 
     @Test
     void testChooseMove() {
-        GameController testTTT = new TicTacToeController(new TicTacToeModel(3, 3));
+        GameController testTTT = new TicTacToeController(new TicTacToeModel(3, 3), new MostSquaresHeuristic());
         testTTT.init();
         testTTT.setHumanPlays();
         testTTT.playMove(0); // human
@@ -25,7 +26,7 @@ public class Tests {
 
     @Test
     void testIsAWin() {
-        GameController testTTT = new TicTacToeController(new TicTacToeModel(3, 3));
+        GameController testTTT = new TicTacToeController(new TicTacToeModel(3, 3), new MostSquaresHeuristic());
         testTTT.setHumanPlays();
         testTTT.playMove(0); // human
         testTTT.playMove(1); // comp
@@ -38,7 +39,7 @@ public class Tests {
 
     @Test
     void testPositionValue() {
-        GameController testTTT = new TicTacToeController(new TicTacToeModel(3, 3));
+        GameController testTTT = new TicTacToeController(new TicTacToeModel(3, 3), new MostSquaresHeuristic());
         testTTT.setHumanPlays();
         testTTT.playMove(0); // human
         testTTT.playMove(1); // comp

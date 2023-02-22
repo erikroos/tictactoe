@@ -1,15 +1,14 @@
 package controller;
 
 import model.Model;
-import model.OthelloModel;
-import model.MostSquaresHeuristic;
+import model.Heuristic;
 
 import java.util.List;
 import java.util.Random;
 
 public class OthelloController extends GameController {
-    public OthelloController(Model board) {
-        super(board, new MostSquaresHeuristic());
+    public OthelloController(Model board, Heuristic heuristic) {
+        super(board, heuristic);
         MAX_DEPTH = 6;
         NAME = "Othello";
         GAMENAME = "reversi";
