@@ -128,7 +128,7 @@ public abstract class GameController {
             }
             // First, map heuristic outcome (negative or positive number) to Human or Computer advantage
             if (side == HUMAN) { // Human, minimizing
-                if (maxValue < 0) {
+                if (maxValue > 0) {
                     maxValue = HUMAN_ADV;
                 } else {
                     maxValue = COMPUTER_ADV;
